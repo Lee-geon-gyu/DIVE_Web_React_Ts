@@ -1,0 +1,181 @@
+:is(
+    .reference-card,
+    .ai-tool-card,
+    .ai-tool-detail-card,
+    .resource-card,
+    .resource-detail-card,
+    .responsive-guide-card,
+    .library-card,
+    .publishing-guide-card,
+    .home-categories__link
+  ) {
+  transition-property: border-color, background-color, box-shadow, transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+:is(
+    .reference-card,
+    .ai-tool-card,
+    .ai-tool-detail-card,
+    .resource-card,
+    .resource-detail-card,
+    .responsive-guide-card,
+    .library-card,
+    .publishing-guide-card,
+    .home-categories__link
+  ):focus-visible {
+  border-color: var(--color-primary);
+  background-color: var(--color-background-subtle);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-4px);
+}
+
+:is(
+    .reference-card__title,
+    .ai-tool-card__name,
+    .ai-tool-detail-card__name,
+    .resource-card__title,
+    .resource-detail-card__title,
+    .responsive-guide-card__title,
+    .library-card__name,
+    .publishing-guide-card__title,
+    .home-categories__card-title,
+    .home-featured-guides__card-title
+  ) {
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+:is(
+    .reference-card,
+    .ai-tool-card,
+    .ai-tool-detail-card,
+    .resource-card,
+    .resource-detail-card,
+    .responsive-guide-card,
+    .library-card,
+    .publishing-guide-card,
+    .home-categories__link,
+    .home-featured-guides__link
+  ):is(:hover, :focus-visible)
+  :is(
+    .reference-card__title,
+    .ai-tool-card__name,
+    .ai-tool-detail-card__name,
+    .resource-card__title,
+    .resource-detail-card__title,
+    .responsive-guide-card__title,
+    .library-card__name,
+    .publishing-guide-card__title,
+    .home-categories__card-title,
+    .home-featured-guides__card-title
+  ) {
+  color: var(--color-primary);
+}
+
+:is(
+    .reference-card__link-label,
+    .ai-tool-card__link-label,
+    .ai-tool-detail-card__link-label,
+    .resource-card__link-label,
+    .resource-detail-card__link-label,
+    .responsive-guide-card__link-label,
+    .library-card__link-label,
+    .publishing-guide-card__link-label,
+    .home-categories__link-label,
+    .home-featured-guides__link-label
+  ) {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+:is(
+    .reference-card,
+    .ai-tool-card,
+    .ai-tool-detail-card,
+    .resource-card,
+    .resource-detail-card,
+    .responsive-guide-card,
+    .library-card,
+    .publishing-guide-card,
+    .home-categories__link,
+    .home-featured-guides__link
+  ):is(:hover, :focus-visible)
+  :is(
+    .reference-card__link-label,
+    .ai-tool-card__link-label,
+    .ai-tool-detail-card__link-label,
+    .resource-card__link-label,
+    .resource-detail-card__link-label,
+    .responsive-guide-card__link-label,
+    .library-card__link-label,
+    .publishing-guide-card__link-label,
+    .home-categories__link-label,
+    .home-featured-guides__link-label
+  ) {
+  transform: translateX(5px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(
+      .reference-card,
+      .ai-tool-card,
+      .ai-tool-detail-card,
+      .resource-card,
+      .resource-detail-card,
+      .responsive-guide-card,
+      .library-card,
+      .publishing-guide-card,
+      .home-categories__link
+    ):hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-background-subtle);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-4px);
+  }
+}
+
+@media (hover: none) {
+  :is(
+      .reference-card,
+      .ai-tool-card,
+      .ai-tool-detail-card,
+      .resource-card,
+      .resource-detail-card,
+      .responsive-guide-card,
+      .library-card,
+      .publishing-guide-card,
+      .home-categories__link
+    ):hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(
+      .reference-card,
+      .ai-tool-card,
+      .ai-tool-detail-card,
+      .resource-card,
+      .resource-detail-card,
+      .responsive-guide-card,
+      .library-card,
+      .publishing-guide-card,
+      .home-categories__link,
+      .home-featured-guides__link
+    ):is(:hover, :focus-visible),
+  :is(
+      .reference-card__link-label,
+      .ai-tool-card__link-label,
+      .ai-tool-detail-card__link-label,
+      .resource-card__link-label,
+      .resource-detail-card__link-label,
+      .responsive-guide-card__link-label,
+      .library-card__link-label,
+      .publishing-guide-card__link-label,
+      .home-categories__link-label,
+      .home-featured-guides__link-label
+    ) {
+    transform: none;
+  }
+}

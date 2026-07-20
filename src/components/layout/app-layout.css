@@ -1,0 +1,20 @@
+.page-container {
+  width: 100%;
+  padding-inline: var(--page-padding);
+}
+
+.content-container {
+  width: min(100%, var(--content-max-width));
+  margin-inline: auto;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+.app-layout__main {
+  flex: 1 0 auto;
+}

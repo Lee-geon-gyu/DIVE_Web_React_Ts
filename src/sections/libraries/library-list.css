@@ -1,0 +1,28 @@
+.library-list {
+  width: 100%;
+  padding-block: var(--space-20);
+  background-color: var(--color-background);
+}
+
+.library-list__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-10);
+}
+
+.library-list__item {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .library-list {
+    padding-block: var(--space-16);
+  }
+
+  .library-list__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+}

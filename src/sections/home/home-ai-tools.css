@@ -1,0 +1,109 @@
+.home-ai-tools {
+  --ai-grid-y: 0%;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: clip;
+  padding-block: var(--space-20);
+  background-color: var(--color-background);
+}
+
+.home-ai-tools::before {
+  position: absolute;
+  z-index: -1;
+  inset: -8% 0;
+  opacity: 0.45;
+  background-image:
+    linear-gradient(var(--color-divider) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-divider) 1px, transparent 1px);
+  background-size: 48px 48px;
+  content: "";
+  pointer-events: none;
+  transform: translate3d(0, var(--ai-grid-y), 0);
+}
+
+.home-ai-tools__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.home-ai-tools__heading {
+  display: flex;
+  max-width: 48rem;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.home-ai-tools__title {
+  font-size: var(--font-size-2xl);
+}
+
+.home-ai-tools__description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+}
+
+.home-ai-tools__all-link {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-5);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-pill);
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.home-ai-tools__all-link:hover,
+.home-ai-tools__all-link:focus-visible {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.home-ai-tools__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-10);
+}
+
+.home-ai-tools__item {
+  min-width: 0;
+}
+
+@media (max-width: 1279px) {
+  .home-ai-tools__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .home-ai-tools {
+    padding-block: var(--space-16);
+  }
+
+  .home-ai-tools__header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .home-ai-tools__all-link {
+    width: 100%;
+  }
+
+  .home-ai-tools__list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+}

@@ -1,0 +1,89 @@
+.reference-card {
+  display: flex;
+  min-height: 100%;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.reference-card:hover,
+.reference-card:focus-visible {
+  border-color: var(--color-primary);
+  background-color: var(--color-background-subtle);
+  transform: translateY(-2px);
+}
+
+.reference-card__category {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.reference-card__title {
+  font-size: var(--font-size-xl);
+}
+
+.reference-card__description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.reference-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.reference-card__tag {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-600);
+  background-color: var(--color-gray-100);
+  font-size: var(--font-size-xs);
+}
+
+.reference-card__footer {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+
+.reference-card__type {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-xs);
+}
+
+.reference-card__link-label {
+  flex: 0 0 auto;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 767px) {
+  .reference-card {
+    padding: var(--space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reference-card:hover,
+  .reference-card:focus-visible {
+    transform: none;
+  }
+}
