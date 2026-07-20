@@ -164,7 +164,7 @@ export function Header() {
             >
               <img
                 className="site-header__logo-image"
-                src="/DIVE_logo_Typo_text.png"
+                src={`${import.meta.env.BASE_URL}DIVE_logo_Typo_text.png`}
                 alt="DIVE 홈"
                 width="1373"
                 height="516"

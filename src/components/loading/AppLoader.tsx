@@ -183,7 +183,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
 
         <img
           className="app-loader__logo"
-          src="/DIVE_logo_Typo.png"
+          src={`${import.meta.env.BASE_URL}DIVE_logo_Typo.png`}
           alt=""
           width="1379"
           height="395"
