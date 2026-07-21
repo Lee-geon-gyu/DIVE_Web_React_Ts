@@ -1,8 +1,21 @@
 import { gsap } from 'gsap'
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import { useLenisRef } from '../../app/providers/lenis-context'
 import './app-loader.css'
 
 const LOADING_MESSAGE = 'Dive Into Verified Experiences.'
+const BLOCKED_SCROLL_KEYS = new Set([
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'PageUp',
+  'PageDown',
+  'Home',
+  'End',
+  ' ',
+  'Spacebar',
+])
 
 interface AppLoaderProps {
   onComplete: () => void
@@ -10,8 +23,9 @@ interface AppLoaderProps {
 
 export function AppLoader({ onComplete }: AppLoaderProps) {
   const loaderRef = useRef<HTMLDivElement>(null)
+  const lenisRef = useLenisRef()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const loader = loaderRef.current
 
     if (!loader) {
@@ -20,23 +34,71 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
 
     const previousBodyOverflow = document.body.style.overflow
     const previousHtmlOverflow = document.documentElement.style.overflow
+    const previousBodyOverscrollBehavior =
+      document.body.style.overscrollBehavior
+    const previousHtmlOverscrollBehavior =
+      document.documentElement.style.overscrollBehavior
+    const previousBodyTouchAction = document.body.style.touchAction
+    const previousHtmlTouchAction = document.documentElement.style.touchAction
+    const previousScrollRestoration = window.history.scrollRestoration
     const previousActiveElement = document.activeElement
     let isPageRestored = false
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
 
-    document.body.style.overflow = 'hidden'
-    document.documentElement.style.overflow = 'hidden'
-    loader.focus({ preventScroll: true })
+    const resetInitialScrollPosition = () => {
+      lenisRef.current?.scrollTo(0, { immediate: true })
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
 
-    const preventBackgroundFocus = (event: KeyboardEvent) => {
+    const preventInitialScroll = (event: Event) => {
+      event.preventDefault()
+    }
+
+    const preventBackgroundInteraction = (event: KeyboardEvent) => {
       if (event.key === 'Tab') {
+        event.preventDefault()
+        return
+      }
+
+      if (
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey &&
+        BLOCKED_SCROLL_KEYS.has(event.key)
+      ) {
         event.preventDefault()
       }
     }
 
-    document.addEventListener('keydown', preventBackgroundFocus)
+    const keepInitialScrollPosition = () => {
+      if (window.scrollX !== 0 || window.scrollY !== 0) {
+        resetInitialScrollPosition()
+      }
+    }
+
+    window.history.scrollRestoration = 'manual'
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    document.body.style.overscrollBehavior = 'none'
+    document.documentElement.style.overscrollBehavior = 'none'
+    document.body.style.touchAction = 'none'
+    document.documentElement.style.touchAction = 'none'
+    lenisRef.current?.stop()
+    resetInitialScrollPosition()
+    loader.focus({ preventScroll: true })
+
+    document.addEventListener('keydown', preventBackgroundInteraction)
+    window.addEventListener('wheel', preventInitialScroll, { passive: false })
+    window.addEventListener('touchmove', preventInitialScroll, {
+      passive: false,
+    })
+    window.addEventListener('scroll', keepInitialScrollPosition, {
+      passive: true,
+    })
 
     const restorePage = () => {
       if (isPageRestored) {
@@ -44,9 +106,18 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
       }
 
       isPageRestored = true
-      document.removeEventListener('keydown', preventBackgroundFocus)
+      document.removeEventListener('keydown', preventBackgroundInteraction)
+      window.removeEventListener('wheel', preventInitialScroll)
+      window.removeEventListener('touchmove', preventInitialScroll)
+      window.removeEventListener('scroll', keepInitialScrollPosition)
       document.body.style.overflow = previousBodyOverflow
       document.documentElement.style.overflow = previousHtmlOverflow
+      document.body.style.overscrollBehavior = previousBodyOverscrollBehavior
+      document.documentElement.style.overscrollBehavior =
+        previousHtmlOverscrollBehavior
+      document.body.style.touchAction = previousBodyTouchAction
+      document.documentElement.style.touchAction = previousHtmlTouchAction
+      window.history.scrollRestoration = previousScrollRestoration
 
       if (
         previousActiveElement instanceof HTMLElement &&
@@ -59,7 +130,9 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
     }
 
     const completeLoading = () => {
+      resetInitialScrollPosition()
       restorePage()
+      resetInitialScrollPosition()
       onComplete()
     }
 
@@ -149,7 +222,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
       context.revert()
       restorePage()
     }
-  }, [onComplete])
+  }, [lenisRef, onComplete])
 
   return (
     <div

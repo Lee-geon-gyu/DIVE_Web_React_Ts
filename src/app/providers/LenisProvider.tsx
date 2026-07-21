@@ -2,8 +2,13 @@ import Lenis from 'lenis'
 import { useEffect, useRef, type PropsWithChildren } from 'react'
 import { LenisContext } from './lenis-context'
 
-export function LenisProvider({ children }: PropsWithChildren) {
+interface LenisProviderProps extends PropsWithChildren {
+  isPaused: boolean
+}
+
+export function LenisProvider({ children, isPaused }: LenisProviderProps) {
   const lenisRef = useRef<Lenis | null>(null)
+  const initiallyPausedRef = useRef(isPaused)
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -16,6 +21,12 @@ export function LenisProvider({ children }: PropsWithChildren) {
 
     const lenis = new Lenis()
     lenisRef.current = lenis
+
+    if (initiallyPausedRef.current) {
+      lenis.stop()
+      lenis.scrollTo(0, { immediate: true })
+    }
+
     let animationFrameId = 0
 
     const update = (time: number) => {
@@ -31,6 +42,22 @@ export function LenisProvider({ children }: PropsWithChildren) {
       lenisRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const lenis = lenisRef.current
+
+    if (!lenis) return
+
+    if (isPaused) {
+      lenis.stop()
+      lenis.scrollTo(0, { immediate: true })
+      return
+    }
+
+    lenis.resize()
+    lenis.scrollTo(0, { immediate: true })
+    lenis.start()
+  }, [isPaused])
 
   return <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>
 }

@@ -4,11 +4,9 @@ import './header.css'
 
 const navigationItems = [
   { label: 'UI/UX', to: '/reference' },
-  { label: 'AI 도구', to: '/ai' },
   { label: '디자인 리소스', to: '/resources' },
   { label: '반응형 웹', to: '/responsive-web' },
   { label: '웹 라이브러리', to: '/libraries' },
-  { label: '퍼블리싱 가이드', to: '/publishing-guide' },
 ] as const
 
 function getNavigationClassName({ isActive }: { isActive: boolean }) {

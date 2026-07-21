@@ -12,10 +12,10 @@ export function App() {
   }, [])
 
   return (
-    <LenisProvider>
+    <LenisProvider isPaused={isLoading}>
       {isLoading ? <AppLoader onComplete={handleLoadingComplete} /> : null}
       {!isLoading ? <AosManager /> : null}
-      <AppLayout />
+      <AppLayout isLoading={isLoading} />
     </LenisProvider>
   )
 }

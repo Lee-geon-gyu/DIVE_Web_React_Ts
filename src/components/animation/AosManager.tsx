@@ -2,6 +2,7 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
+import { ScrollTrigger } from '../../lib/animation/gsap'
 import './aos-manager.css'
 
 let isAosInitialized = false
@@ -11,18 +12,35 @@ export function AosManager() {
   const previousLocationKeyRef = useRef(location.key)
 
   useEffect(() => {
-    if (isAosInitialized) return
+    let firstFrameId = 0
+    let secondFrameId = 0
 
-    AOS.init({
-      duration: 750,
-      easing: 'ease-out-cubic',
-      offset: 80,
-      once: true,
-      mirror: false,
-      disableMutationObserver: true,
-      disable: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    if (!isAosInitialized) {
+      AOS.init({
+        duration: 750,
+        easing: 'ease-out-cubic',
+        offset: 80,
+        once: true,
+        mirror: false,
+        disableMutationObserver: true,
+        disable: () =>
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      })
+      isAosInitialized = true
+    }
+
+    firstFrameId = window.requestAnimationFrame(() => {
+      secondFrameId = window.requestAnimationFrame(() => {
+        AOS.refreshHard()
+        ScrollTrigger.refresh()
+        ScrollTrigger.update()
+      })
     })
-    isAosInitialized = true
+
+    return () => {
+      window.cancelAnimationFrame(firstFrameId)
+      window.cancelAnimationFrame(secondFrameId)
+    }
   }, [])
 
   useEffect(() => {

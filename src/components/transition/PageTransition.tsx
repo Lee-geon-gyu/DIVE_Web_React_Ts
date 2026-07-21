@@ -11,6 +11,23 @@ import './page-transition.css'
 
 const TRANSITION_DURATION = 0.3
 const TRANSITION_EASE = 'power2.out'
+const ROUTER_BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '')
+
+function getRouterPath(url: URL) {
+  if (
+    ROUTER_BASENAME &&
+    url.pathname !== ROUTER_BASENAME &&
+    !url.pathname.startsWith(`${ROUTER_BASENAME}/`)
+  ) {
+    return null
+  }
+
+  const pathname = ROUTER_BASENAME
+    ? url.pathname.slice(ROUTER_BASENAME.length) || '/'
+    : url.pathname
+
+  return `${pathname}${url.search}`
+}
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -93,8 +110,13 @@ export function PageTransition() {
         return
       }
 
+      const targetPath = getRouterPath(url)
+
+      if (!targetPath) {
+        return
+      }
+
       const currentPath = `${location.pathname}${location.search}`
-      const targetPath = `${url.pathname}${url.search}`
 
       if (currentPath === targetPath) {
         event.preventDefault()

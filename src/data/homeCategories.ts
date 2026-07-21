@@ -12,12 +12,6 @@ export const homeCategories: HomeCategory[] = [
     to: '/reference',
   },
   {
-    title: 'AI 도구',
-    description:
-      '디자인과 웹 제작에 활용할 수 있는 AI 도구의 특징, 활용 목적과 주의점을 확인합니다.',
-    to: '/ai',
-  },
-  {
     title: '디자인 리소스',
     description:
       '폰트, 아이콘, 이미지와 목업을 용도에 맞게 선택하고 안전하게 사용하는 기준을 알아봅니다.',
@@ -34,11 +28,5 @@ export const homeCategories: HomeCategory[] = [
     description:
       '라이브러리의 목적과 적절한 사용 상황, 장단점을 비교해 구현에 필요한 도구를 선택합니다.',
     to: '/libraries',
-  },
-  {
-    title: '퍼블리싱 가이드',
-    description:
-      '시맨틱 HTML부터 접근성, 성능과 유지보수까지 안정적인 웹 제작 기준을 익힙니다.',
-    to: '/publishing-guide',
   },
 ]

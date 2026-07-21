@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   font-size: 16px;
 }
 
@@ -38,7 +38,7 @@ body {
   min-height: 100dvh;
   max-width: 100%;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
   line-height: var(--line-height-base);
   font-family: var(--font-family-base);
   word-break: keep-all;
