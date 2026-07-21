@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react'
-import { gsap } from '../../lib/animation/gsap'
+import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
 
 function playAfterLoader(timeline: gsap.core.Timeline) {
   const loader = document.querySelector('.app-loader')
@@ -34,9 +34,48 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
     let stopWatchingLoader: () => void = () => undefined
     const media = gsap.matchMedia()
     const context = gsap.context(() => {
+      const sharedScope = root.querySelector<HTMLElement>('.home-visual-group')
+      const sharedBackground = root.querySelector<HTMLElement>(
+        '.home-visual-group__background',
+      )
+
+      if (sharedScope && sharedBackground) {
+        const prefersReducedMotion = window.matchMedia(
+          '(prefers-reduced-motion: reduce)',
+        ).matches
+        const setBackgroundVisibility = (isVisible: boolean) => {
+          gsap.to(sharedBackground, {
+            autoAlpha: isVisible ? 1 : 0,
+            duration: prefersReducedMotion ? 0 : 0.4,
+            ease: 'power1.out',
+            overwrite: true,
+          })
+        }
+
+        ScrollTrigger.getById('home-fixed-content-background')?.kill()
+        gsap.set(sharedBackground, { autoAlpha: 0 })
+        ScrollTrigger.create({
+          id: 'home-fixed-content-background',
+          trigger: sharedScope,
+          start: 'top top',
+          end: 'bottom bottom',
+          onEnter: () => setBackgroundVisibility(true),
+          onEnterBack: () => setBackgroundVisibility(true),
+          onLeave: () => setBackgroundVisibility(false),
+          onLeaveBack: () => setBackgroundVisibility(false),
+          onRefresh: (self) => setBackgroundVisibility(self.isActive),
+        })
+      }
+
       media.add('(prefers-reduced-motion: no-preference)', () => {
         const hero = root.querySelector<HTMLElement>('.home-hero')
         const heroContent = root.querySelector<HTMLElement>('.home-hero__inner')
+        const sharedBackgroundPointer = root.querySelector<HTMLElement>(
+          '.home-visual-group__background-pointer',
+        )
+        const sharedBackgroundAmbient = root.querySelector<HTMLElement>(
+          '.home-visual-group__background-ambient',
+        )
         const serviceName = root.querySelector<HTMLElement>(
           '.home-hero__service-name',
         )
@@ -58,18 +97,6 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
         ) {
           const intro = gsap
             .timeline({ paused: true, defaults: { ease: 'power3.out' } })
-            .fromTo(
-              hero,
-              {
-                '--hero-decor-opacity': 0,
-                '--hero-decor-scale': 1.04,
-              },
-              {
-                '--hero-decor-opacity': 1,
-                '--hero-decor-scale': 1,
-                duration: 0.7,
-              },
-            )
             .fromTo(
               serviceName,
               { y: 20, opacity: 0 },
@@ -98,35 +125,118 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
           stopWatchingLoader = playAfterLoader(intro)
         }
 
-        const createSectionEffects = (strength: number) => {
-          if (hero && heroContent) {
-            gsap.to(heroContent, {
-              y: -48 * strength,
-              opacity: 0.72,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: hero,
-                start: 'top top',
-                end: 'bottom top',
-                scrub: 0.8,
-              },
-            })
+        if (sharedBackgroundAmbient) {
+          const isTablet = window.matchMedia(
+            '(min-width: 768px) and (max-width: 1279px)',
+          ).matches
+          const isDesktop = window.matchMedia('(min-width: 1280px)').matches
 
-            gsap.to(hero, {
-              '--hero-near-y': `${12 * strength}%`,
-              '--hero-far-y': `${5 * strength}%`,
-              '--hero-near-rotate': `${3 * strength}deg`,
-              '--hero-scroll-scale': 1.03,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: hero,
-                start: 'top top',
-                end: 'bottom top',
-                scrub: 0.8,
-              },
-            })
+          if (isTablet || isDesktop) {
+            const strength = isTablet ? 0.5 : 1
+
+            gsap
+              .timeline({ repeat: -1 })
+              .to(sharedBackgroundAmbient, {
+                x: 2 * strength,
+                y: -2 * strength,
+                rotationY: 0.06 * strength,
+                rotationX: -0.04 * strength,
+                duration: 4,
+                ease: 'sine.inOut',
+              })
+              .to(sharedBackgroundAmbient, {
+                x: 1.5 * strength,
+                y: 2 * strength,
+                rotationY: 0.03 * strength,
+                rotationX: 0.04 * strength,
+                duration: 4,
+                ease: 'sine.inOut',
+              })
+              .to(sharedBackgroundAmbient, {
+                x: -2 * strength,
+                y: 1.5 * strength,
+                rotationY: -0.06 * strength,
+                rotationX: 0.03 * strength,
+                duration: 4,
+                ease: 'sine.inOut',
+              })
+              .to(sharedBackgroundAmbient, {
+                x: -1.5 * strength,
+                y: -2 * strength,
+                rotationY: -0.03 * strength,
+                rotationX: -0.04 * strength,
+                duration: 4,
+                ease: 'sine.inOut',
+              })
+              .to(sharedBackgroundAmbient, {
+                x: 0,
+                y: 0,
+                rotationY: 0,
+                rotationX: 0,
+                duration: 4,
+                ease: 'sine.inOut',
+              })
+          }
+        }
+
+        let removeHomeBackgroundEffects = () => undefined
+
+        if (
+          sharedScope &&
+          sharedBackground &&
+          sharedBackgroundPointer &&
+          window.matchMedia(
+            '(min-width: 1280px) and (hover: hover) and (pointer: fine)',
+          ).matches
+        ) {
+          const moveBackgroundX = gsap.quickTo(sharedBackgroundPointer, 'x', {
+            duration: 0.8,
+            ease: 'power3.out',
+          })
+          const moveBackgroundY = gsap.quickTo(sharedBackgroundPointer, 'y', {
+            duration: 0.8,
+            ease: 'power3.out',
+          })
+          const rotateBackgroundX = gsap.quickTo(
+            sharedBackgroundPointer,
+            'rotationX',
+            { duration: 1, ease: 'power3.out' },
+          )
+          const rotateBackgroundY = gsap.quickTo(
+            sharedBackgroundPointer,
+            'rotationY',
+            { duration: 1, ease: 'power3.out' },
+          )
+          const handlePointerMove = (event: PointerEvent) => {
+            const normalizedX = (event.clientX / window.innerWidth) * 2 - 1
+            const normalizedY = (event.clientY / window.innerHeight) * 2 - 1
+
+            moveBackgroundX(normalizedX * 4)
+            moveBackgroundY(normalizedY * 3)
+            rotateBackgroundX(normalizedY * -0.08)
+            rotateBackgroundY(normalizedX * 0.12)
           }
 
+          const resetPointerPosition = () => {
+            moveBackgroundX(0)
+            moveBackgroundY(0)
+            rotateBackgroundX(0)
+            rotateBackgroundY(0)
+          }
+
+          sharedScope.addEventListener('pointermove', handlePointerMove, {
+            passive: true,
+          })
+          sharedScope.addEventListener('pointerleave', resetPointerPosition)
+
+          removeHomeBackgroundEffects = () => {
+            sharedScope.removeEventListener('pointermove', handlePointerMove)
+            sharedScope.removeEventListener('pointerleave', resetPointerPosition)
+            gsap.killTweensOf(sharedBackgroundPointer)
+          }
+        }
+
+        const createSectionEffects = (strength: number) => {
           const categories = root.querySelector<HTMLElement>('.home-categories')
           if (categories) {
             gsap.fromTo(
@@ -271,6 +381,8 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
               0.62,
             )
         }
+
+        return removeHomeBackgroundEffects
       })
 
       media.add('(prefers-reduced-motion: reduce)', () => {
@@ -281,7 +393,9 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
           { clearProps: 'all' },
         )
         gsap.set(
-          root.querySelectorAll('.home-hero, .home-final-cta'),
+          root.querySelectorAll(
+            '.home-hero, .home-visual-group__background, .home-visual-group__background-pointer, .home-visual-group__background-ambient, .home-final-cta',
+          ),
           { clearProps: 'all' },
         )
       })
@@ -289,6 +403,10 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
 
     return () => {
       stopWatchingLoader()
+      ScrollTrigger.getById('home-fixed-content-background')?.kill()
+      gsap.killTweensOf(
+        root.querySelector<HTMLElement>('.home-visual-group__background'),
+      )
       media.revert()
       context.revert()
     }

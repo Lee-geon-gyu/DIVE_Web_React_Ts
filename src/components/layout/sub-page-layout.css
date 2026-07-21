@@ -1,0 +1,53 @@
+.sub-page-layout {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: clip;
+  color: var(--color-text-primary);
+  background-color: #000000;
+}
+
+.sub-page-layout__background,
+.sub-page-layout__readability {
+  position: fixed;
+  pointer-events: none;
+}
+
+.sub-page-layout__background {
+  z-index: -2;
+  inset: 0;
+  will-change: transform;
+}
+
+.sub-page-layout__background-image {
+  display: block;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+}
+
+.sub-page-layout__readability {
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 12%) 0%,
+    rgb(0 0 0 / 30%) 45%,
+    rgb(0 0 0 / 72%) 100%
+  );
+}
+
+.sub-page-layout__content {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-page-layout__background {
+    transform: none;
+  }
+}

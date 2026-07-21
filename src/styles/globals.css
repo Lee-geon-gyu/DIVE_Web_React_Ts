@@ -6,6 +6,31 @@ body {
   background-color: var(--color-background);
 }
 
+.home-page .ai-tool-list,
+.home-page .publishing-guide-list {
+  color-scheme: light;
+  --color-background: #fff;
+  --color-background-subtle: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f3f4f6;
+  --color-text-primary: #111111;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-divider: #e5e7eb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-50: #f7f8fa;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111111;
+}
+
 ::selection {
   color: var(--color-text-primary);
   background-color: var(--color-primary-soft);

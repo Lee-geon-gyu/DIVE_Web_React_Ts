@@ -1,14 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
+import { primaryNavigationItems } from '../../data/navigation'
 import './footer.css'
-
-const footerNavigationItems = [
-  { label: 'UI/UX', to: '/reference' },
-  { label: 'AI 도구', to: '/ai' },
-  { label: '디자인 리소스', to: '/resources' },
-  { label: '반응형 웹', to: '/responsive-web' },
-  { label: '웹 라이브러리', to: '/libraries' },
-  { label: '퍼블리싱 가이드', to: '/publishing-guide' },
-] as const
 
 export function Footer() {
   return (
@@ -31,7 +23,7 @@ export function Footer() {
             data-aos-delay="80"
           >
             <ul className="site-footer__navigation-list">
-              {footerNavigationItems.map((item) => (
+              {primaryNavigationItems.map((item) => (
                 <li key={item.to}>
                   <NavLink className="site-footer__navigation-link" to={item.to}>
                     {item.label}

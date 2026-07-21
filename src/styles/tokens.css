@@ -1,40 +1,44 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --color-primary: #3182f6;
-  --color-primary-hover: #1b64da;
-  --color-primary-active: #1957c2;
-  --color-primary-soft: #e8f3ff;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-active: #1e40af;
+  --color-primary-soft: rgb(37 99 235 / 8%);
 
-  --color-secondary: #03c75a;
-  --color-secondary-hover: #02ad4e;
-  --color-secondary-active: #029843;
-  --color-secondary-soft: #e8f8ee;
+  --color-secondary: #2563eb;
+  --color-secondary-hover: #1d4ed8;
+  --color-secondary-active: #1e40af;
+  --color-secondary-soft: rgb(37 99 235 / 8%);
 
   --color-black: #191f28;
   --color-white: #ffffff;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f2f4f6;
-  --color-gray-200: #e5e8eb;
-  --color-gray-300: #d1d6db;
-  --color-gray-400: #8b95a1;
-  --color-gray-500: #6b7684;
-  --color-gray-600: #4e5968;
-  --color-gray-700: #3b4654;
-  --color-gray-800: #333d4b;
-  --color-gray-900: #191f28;
+  --color-gray-50: rgb(255 255 255 / 3%);
+  --color-gray-100: rgb(255 255 255 / 7%);
+  --color-gray-200: rgb(255 255 255 / 12%);
+  --color-gray-300: rgb(255 255 255 / 20%);
+  --color-gray-400: rgb(255 255 255 / 46%);
+  --color-gray-500: rgb(255 255 255 / 50%);
+  --color-gray-600: rgb(255 255 255 / 62%);
+  --color-gray-700: rgb(255 255 255 / 72%);
+  --color-gray-800: rgb(255 255 255 / 84%);
+  --color-gray-900: #ffffff;
 
   --color-success: #00a86b;
   --color-warning: #f59f00;
   --color-error: #e5484d;
 
-  --color-background: var(--color-white);
-  --color-background-subtle: var(--color-gray-50);
-  --color-surface: var(--color-white);
-  --color-text-primary: var(--color-gray-900);
-  --color-text-secondary: var(--color-gray-500);
-  --color-divider: var(--color-gray-200);
-  --color-overlay: rgb(25 31 40 / 48%);
+  --color-background: #000000;
+  --color-background-subtle: #080a0f;
+  --color-surface: #10131a;
+  --color-surface-subtle: rgb(255 255 255 / 7%);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgb(255 255 255 / 72%);
+  --color-text-muted: rgb(255 255 255 / 50%);
+  --color-border: rgb(255 255 255 / 14%);
+  --color-border-strong: rgb(255 255 255 / 30%);
+  --color-divider: rgb(255 255 255 / 12%);
+  --color-overlay: rgb(0 0 0 / 64%);
 
   --font-family-base: "Pretendard", -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
@@ -42,14 +46,15 @@
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
-  --font-size-xl: 1.375rem;
-  --font-size-2xl: clamp(1.75rem, 2vw, 2.25rem);
-  --font-size-display: clamp(2rem, 4vw, 4rem);
+  --font-size-xl: clamp(1.25rem, 1.6vw, 1.75rem);
+  --font-size-subtitle: clamp(1.8rem, 2.4vw, 3rem);
+  --font-size-2xl: clamp(2.4rem, 3.5vw, 4rem);
+  --font-size-display: clamp(3.5rem, 6vw, 6rem);
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --line-height-tight: 1.25;
+  --line-height-tight: 1.08;
   --line-height-base: 1.5;
   --line-height-relaxed: 1.7;
 
@@ -66,15 +71,16 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  --page-padding: clamp(20px, 6.25vw, 120px);
-  --content-max-width: 1600px;
+  --page-padding: clamp(24px, 4vw, 72px);
+  --content-max-width: 1440px;
+  --section-padding-block: clamp(112px, 12vw, 192px);
 
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-pill: 9999px;
 
-  --shadow-card: 0 10px 30px rgb(25 31 40 / 8%);
+  --shadow-card: 0 12px 32px rgb(17 24 39 / 6%);
   --shadow-floating: 0 14px 40px rgb(25 31 40 / 12%);
 
   --transition-fast: 0.2s ease;
@@ -95,7 +101,7 @@
   --z-header: 100;
   --z-modal: 200;
 
-  --focus-ring-color: rgb(49 130 246 / 45%);
+  --focus-ring-color: rgb(37 99 235 / 32%);
   --focus-ring: 0 0 0 3px var(--focus-ring-color);
 
   --object-fit-cover: cover;

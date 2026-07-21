@@ -1,4 +1,5 @@
 import { Header } from '../navigation/Header'
+import { ScrollProgress } from '../navigation/ScrollProgress'
 import { PageTransition } from '../transition/PageTransition'
 import { Footer } from './Footer'
 import './app-layout.css'
@@ -15,6 +16,7 @@ export function AppLayout({ isLoading }: AppLayoutProps) {
       aria-hidden={isLoading || undefined}
     >
       <Header />
+      <ScrollProgress />
 
       <main id="main-content" className="app-layout__main" tabIndex={-1}>
         <PageTransition />

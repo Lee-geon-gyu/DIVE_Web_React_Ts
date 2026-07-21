@@ -1,0 +1,55 @@
+.shared-hero-background,
+.shared-hero-background__pointer,
+.shared-hero-background__ambient,
+.shared-hero-background__readability {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shared-hero-background {
+  z-index: 0;
+  height: 100dvh;
+  overflow: hidden;
+  perspective: 1200px;
+  perspective-origin: center;
+}
+
+.shared-hero-background__pointer,
+.shared-hero-background__ambient {
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.shared-hero-background__image {
+  display: block;
+  position: relative;
+  top: -2.5%;
+  left: -2.5%;
+  width: 105%;
+  height: 105%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.shared-hero-background__readability {
+  background: linear-gradient(
+    90deg,
+    rgb(0 0 0 / 50%) 0%,
+    rgb(0 0 0 / 20%) 58%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shared-hero-background__pointer,
+  .shared-hero-background__ambient {
+    transform: none;
+    will-change: auto;
+  }
+}

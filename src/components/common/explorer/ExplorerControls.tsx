@@ -5,6 +5,11 @@ export interface ExplorerFilterOption {
   label: string
 }
 
+export interface ExplorerSortOption {
+  value: string
+  label: string
+}
+
 interface ExplorerControlsProps {
   searchInputId: string
   resultsId: string
@@ -16,6 +21,10 @@ interface ExplorerControlsProps {
   filterOptions: ExplorerFilterOption[]
   selectedFilter: string
   onSelectedFilterChange: (value: string) => void
+  sortLabel?: string
+  sortOptions?: ExplorerSortOption[]
+  selectedSort?: string
+  onSelectedSortChange?: (value: string) => void
 }
 
 export function ExplorerControls({
@@ -29,6 +38,10 @@ export function ExplorerControls({
   filterOptions,
   selectedFilter,
   onSelectedFilterChange,
+  sortLabel,
+  sortOptions,
+  selectedSort,
+  onSelectedSortChange,
 }: ExplorerControlsProps) {
   return (
     <div className="explorer-controls">
@@ -70,6 +83,30 @@ export function ExplorerControls({
           })}
         </ul>
       </fieldset>
+
+      {sortOptions && selectedSort !== undefined && onSelectedSortChange && (
+        <div className="explorer-controls__sort">
+          <label
+            className="explorer-controls__label"
+            htmlFor={`${searchInputId}-sort`}
+          >
+            {sortLabel ?? '정렬'}
+          </label>
+          <select
+            id={`${searchInputId}-sort`}
+            className="explorer-controls__select"
+            value={selectedSort}
+            aria-controls={resultsId}
+            onChange={(event) => onSelectedSortChange(event.target.value)}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   )
 }

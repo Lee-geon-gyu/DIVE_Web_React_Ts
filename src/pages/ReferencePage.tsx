@@ -1,9 +1,11 @@
 import { PageHero } from '../components/common/PageHero'
+import { SubPageLayout } from '../components/layout/SubPageLayout'
+import referenceBackground from '../assets/images/sub/immersive/Immersive_bg_second.png'
 import { ReferenceList } from '../sections/reference/ReferenceList'
 
 export function ReferencePage() {
   return (
-    <>
+    <SubPageLayout backgroundImage={referenceBackground}>
       <PageHero
         eyebrow="REFERENCE"
         title="좋은 디지털 경험을 설계하기 위한 레퍼런스"
@@ -11,6 +13,6 @@ export function ReferencePage() {
         narrowDescription
       />
       <ReferenceList />
-    </>
+    </SubPageLayout>
   )
 }

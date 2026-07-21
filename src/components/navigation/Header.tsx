@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { primaryNavigationItems } from '../../data/navigation'
 import './header.css'
-
-const navigationItems = [
-  { label: 'UI/UX', to: '/reference' },
-  { label: '디자인 리소스', to: '/resources' },
-  { label: '반응형 웹', to: '/responsive-web' },
-  { label: '웹 라이브러리', to: '/libraries' },
-] as const
 
 function getNavigationClassName({ isActive }: { isActive: boolean }) {
   return isActive
@@ -164,15 +158,15 @@ export function Header() {
                 className="site-header__logo-image"
                 src={`${import.meta.env.BASE_URL}DIVE_logo_Typo_text.png`}
                 alt="DIVE 홈"
-                width="1373"
-                height="516"
+                width="1724"
+                height="500"
                 decoding="async"
               />
             </NavLink>
 
             <nav className="site-header__desktop-navigation" aria-label="주요 메뉴">
               <ul className="site-header__navigation-list">
-                {navigationItems.map((item) => (
+                {primaryNavigationItems.map((item) => (
                   <li key={item.to}>
                     <NavLink
                       className={getNavigationClassName}
@@ -240,7 +234,7 @@ export function Header() {
 
               <nav aria-label="모바일 주요 메뉴">
                 <ul className="site-header__mobile-navigation-list">
-                  {navigationItems.map((item) => (
+                  {primaryNavigationItems.map((item) => (
                     <li key={item.to}>
                       <NavLink
                         className={getNavigationClassName}

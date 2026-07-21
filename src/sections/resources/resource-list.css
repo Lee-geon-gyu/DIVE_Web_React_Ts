@@ -1,7 +1,7 @@
 .resource-list {
   width: 100%;
-  padding-block: var(--space-20);
-  background-color: var(--color-background);
+  padding-block: var(--section-padding-block);
+  background-color: transparent;
 }
 
 .resource-list__grid {

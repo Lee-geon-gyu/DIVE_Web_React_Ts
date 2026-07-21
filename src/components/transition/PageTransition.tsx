@@ -151,7 +151,7 @@ export function PageTransition() {
     gsap.killTweensOf(container)
 
     if (location.hash) {
-      gsap.set(container, { opacity: 1, y: 0 })
+      gsap.set(container, { clearProps: 'opacity,transform' })
       return
     }
 
@@ -163,7 +163,7 @@ export function PageTransition() {
     main?.focus({ preventScroll: true })
 
     if (prefersReducedMotion()) {
-      gsap.set(container, { opacity: 1, y: 0 })
+      gsap.set(container, { clearProps: 'opacity,transform' })
       return
     }
 
@@ -176,6 +176,9 @@ export function PageTransition() {
         duration: TRANSITION_DURATION,
         ease: TRANSITION_EASE,
         overwrite: true,
+        onComplete: () => {
+          gsap.set(container, { clearProps: 'opacity,transform' })
+        },
       },
     )
   }, [location.hash, location.key, moveToPageTop, navigationType])
