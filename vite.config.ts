@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/Vibe_Check-List/",
+  base: "/DIVE_Web_React_Ts/",
 });
