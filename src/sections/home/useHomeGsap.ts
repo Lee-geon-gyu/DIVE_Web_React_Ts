@@ -1,91 +1,120 @@
-import { useLayoutEffect, type RefObject } from 'react'
-import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
+import { useLayoutEffect, type RefObject } from "react";
+import { gsap, ScrollTrigger } from "../../lib/animation/gsap";
 
 function playAfterLoader(timeline: gsap.core.Timeline) {
-  const loader = document.querySelector('.app-loader')
+  const loader = document.querySelector(".app-loader");
 
   if (!loader) {
-    timeline.delay(0.32).play()
-    return () => undefined
+    timeline.delay(0.32).play();
+    return () => undefined;
   }
 
-  let frameId = 0
+  let frameId = 0;
+  let hasPlayed = false;
+  const playTimeline = () => {
+    if (hasPlayed) return;
+    hasPlayed = true;
+    observer.disconnect();
+    window.removeEventListener("dive:loader-header-reveal", playTimeline);
+    frameId = window.requestAnimationFrame(() => timeline.play());
+  };
   const observer = new MutationObserver(() => {
-    if (!document.querySelector('.app-loader')) {
-      observer.disconnect()
-      frameId = window.requestAnimationFrame(() => timeline.play())
+    if (!document.querySelector(".app-loader")) {
+      playTimeline();
     }
-  })
+  });
 
-  observer.observe(document.body, { childList: true })
+  window.addEventListener("dive:loader-header-reveal", playTimeline, {
+    once: true,
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   return () => {
-    observer.disconnect()
-    if (frameId) window.cancelAnimationFrame(frameId)
-  }
+    observer.disconnect();
+    window.removeEventListener("dive:loader-header-reveal", playTimeline);
+    if (frameId) window.cancelAnimationFrame(frameId);
+  };
 }
 
 export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
   useLayoutEffect(() => {
-    const root = rootRef.current
+    const root = rootRef.current;
 
-    if (!root) return
+    if (!root) return;
 
-    let stopWatchingLoader: () => void = () => undefined
-    const media = gsap.matchMedia()
+    let stopWatchingLoader: () => void = () => undefined;
+    const media = gsap.matchMedia();
     const context = gsap.context(() => {
-      const sharedScope = root.querySelector<HTMLElement>('.home-visual-group')
+      const sharedScope = root.querySelector<HTMLElement>(".home-visual-group");
       const sharedBackground = root.querySelector<HTMLElement>(
-        '.home-visual-group__background',
-      )
+        ".home-visual-group__background",
+      );
+      const backgroundStartSection =
+        root.querySelector<HTMLElement>(".home-categories");
+      const resources = root.querySelector<HTMLElement>(".home-resources");
 
-      if (sharedScope && sharedBackground) {
+      if (
+        sharedScope &&
+        sharedBackground &&
+        backgroundStartSection &&
+        resources
+      ) {
         const prefersReducedMotion = window.matchMedia(
-          '(prefers-reduced-motion: reduce)',
-        ).matches
-        const setBackgroundVisibility = (isVisible: boolean) => {
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        const setBackgroundVisibility = (
+          isVisible: boolean,
+          immediate = false,
+        ) => {
+          if (immediate) {
+            gsap.set(sharedBackground, { autoAlpha: isVisible ? 1 : 0 });
+            return;
+          }
+
           gsap.to(sharedBackground, {
             autoAlpha: isVisible ? 1 : 0,
-            duration: prefersReducedMotion ? 0 : 0.4,
-            ease: 'power1.out',
-            overwrite: true,
-          })
-        }
+            duration: prefersReducedMotion ? 0 : 0.7,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        };
 
-        ScrollTrigger.getById('home-fixed-content-background')?.kill()
-        gsap.set(sharedBackground, { autoAlpha: 0 })
+        ScrollTrigger.getById("home-fixed-background-range")?.kill();
+        gsap.set(sharedBackground, { autoAlpha: 0 });
         ScrollTrigger.create({
-          id: 'home-fixed-content-background',
-          trigger: sharedScope,
-          start: 'top top',
-          end: 'bottom bottom',
+          id: "home-fixed-background-range",
+          trigger: backgroundStartSection,
+          start: "top 50%",
+          endTrigger: resources,
+          end: "bottom 10%",
           onEnter: () => setBackgroundVisibility(true),
           onEnterBack: () => setBackgroundVisibility(true),
           onLeave: () => setBackgroundVisibility(false),
           onLeaveBack: () => setBackgroundVisibility(false),
-          onRefresh: (self) => setBackgroundVisibility(self.isActive),
-        })
+          onRefresh: (self) => setBackgroundVisibility(self.isActive, true),
+        });
       }
 
-      media.add('(prefers-reduced-motion: no-preference)', () => {
-        const hero = root.querySelector<HTMLElement>('.home-hero')
-        const heroContent = root.querySelector<HTMLElement>('.home-hero__inner')
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        const hero = root.querySelector<HTMLElement>(".home-hero");
+        const heroContent =
+          root.querySelector<HTMLElement>(".home-hero__inner");
         const sharedBackgroundPointer = root.querySelector<HTMLElement>(
-          '.home-visual-group__background-pointer',
-        )
+          ".home-visual-group__background-pointer",
+        );
         const sharedBackgroundAmbient = root.querySelector<HTMLElement>(
-          '.home-visual-group__background-ambient',
-        )
+          ".home-visual-group__background-ambient",
+        );
         const serviceName = root.querySelector<HTMLElement>(
-          '.home-hero__service-name',
-        )
+          ".home-hero__service-name",
+        );
         const titleLine = root.querySelector<HTMLElement>(
-          '.home-hero__title-line',
-        )
+          ".home-hero__title-line",
+        );
         const description = root.querySelector<HTMLElement>(
-          '.home-hero__description',
-        )
-        const cta = root.querySelector<HTMLElement>('.home-hero__cta')
+          ".home-hero__description",
+        );
+        const cta = root.querySelector<HTMLElement>(".home-hero__cta");
 
         if (
           hero &&
@@ -96,7 +125,20 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
           cta
         ) {
           const intro = gsap
-            .timeline({ paused: true, defaults: { ease: 'power3.out' } })
+            .timeline({
+              paused: true,
+              defaults: { ease: "power3.out" },
+              onComplete: () => {
+                gsap.set([serviceName, titleLine, description, cta], {
+                  clearProps:
+                    "opacity,visibility,transform,filter,pointerEvents",
+                });
+                gsap.set(heroContent, {
+                  autoAlpha: 1,
+                  clearProps: "transform,filter,pointerEvents",
+                });
+              },
+            })
             .fromTo(
               serviceName,
               { y: 20, opacity: 0 },
@@ -120,19 +162,19 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
               { y: 20, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.55 },
               0.86,
-            )
+            );
 
-          stopWatchingLoader = playAfterLoader(intro)
+          stopWatchingLoader = playAfterLoader(intro);
         }
 
         if (sharedBackgroundAmbient) {
           const isTablet = window.matchMedia(
-            '(min-width: 768px) and (max-width: 1279px)',
-          ).matches
-          const isDesktop = window.matchMedia('(min-width: 1280px)').matches
+            "(min-width: 768px) and (max-width: 1279px)",
+          ).matches;
+          const isDesktop = window.matchMedia("(min-width: 1280px)").matches;
 
           if (isTablet || isDesktop) {
-            const strength = isTablet ? 0.5 : 1
+            const strength = isTablet ? 0.5 : 1;
 
             gsap
               .timeline({ repeat: -1 })
@@ -142,7 +184,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
                 rotationY: 0.06 * strength,
                 rotationX: -0.04 * strength,
                 duration: 4,
-                ease: 'sine.inOut',
+                ease: "sine.inOut",
               })
               .to(sharedBackgroundAmbient, {
                 x: 1.5 * strength,
@@ -150,7 +192,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
                 rotationY: 0.03 * strength,
                 rotationX: 0.04 * strength,
                 duration: 4,
-                ease: 'sine.inOut',
+                ease: "sine.inOut",
               })
               .to(sharedBackgroundAmbient, {
                 x: -2 * strength,
@@ -158,7 +200,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
                 rotationY: -0.06 * strength,
                 rotationX: 0.03 * strength,
                 duration: 4,
-                ease: 'sine.inOut',
+                ease: "sine.inOut",
               })
               .to(sharedBackgroundAmbient, {
                 x: -1.5 * strength,
@@ -166,7 +208,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
                 rotationY: -0.03 * strength,
                 rotationX: -0.04 * strength,
                 duration: 4,
-                ease: 'sine.inOut',
+                ease: "sine.inOut",
               })
               .to(sharedBackgroundAmbient, {
                 x: 0,
@@ -174,166 +216,170 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
                 rotationY: 0,
                 rotationX: 0,
                 duration: 4,
-                ease: 'sine.inOut',
-              })
+                ease: "sine.inOut",
+              });
           }
         }
 
-        let removeHomeBackgroundEffects = () => undefined
+        let removeHomeBackgroundEffects = () => undefined;
 
         if (
           sharedScope &&
           sharedBackground &&
           sharedBackgroundPointer &&
           window.matchMedia(
-            '(min-width: 1280px) and (hover: hover) and (pointer: fine)',
+            "(min-width: 1280px) and (hover: hover) and (pointer: fine)",
           ).matches
         ) {
-          const moveBackgroundX = gsap.quickTo(sharedBackgroundPointer, 'x', {
+          const moveBackgroundX = gsap.quickTo(sharedBackgroundPointer, "x", {
             duration: 0.8,
-            ease: 'power3.out',
-          })
-          const moveBackgroundY = gsap.quickTo(sharedBackgroundPointer, 'y', {
+            ease: "power3.out",
+          });
+          const moveBackgroundY = gsap.quickTo(sharedBackgroundPointer, "y", {
             duration: 0.8,
-            ease: 'power3.out',
-          })
+            ease: "power3.out",
+          });
           const rotateBackgroundX = gsap.quickTo(
             sharedBackgroundPointer,
-            'rotationX',
-            { duration: 1, ease: 'power3.out' },
-          )
+            "rotationX",
+            { duration: 1, ease: "power3.out" },
+          );
           const rotateBackgroundY = gsap.quickTo(
             sharedBackgroundPointer,
-            'rotationY',
-            { duration: 1, ease: 'power3.out' },
-          )
+            "rotationY",
+            { duration: 1, ease: "power3.out" },
+          );
           const handlePointerMove = (event: PointerEvent) => {
-            const normalizedX = (event.clientX / window.innerWidth) * 2 - 1
-            const normalizedY = (event.clientY / window.innerHeight) * 2 - 1
+            const normalizedX = (event.clientX / window.innerWidth) * 2 - 1;
+            const normalizedY = (event.clientY / window.innerHeight) * 2 - 1;
 
-            moveBackgroundX(normalizedX * 4)
-            moveBackgroundY(normalizedY * 3)
-            rotateBackgroundX(normalizedY * -0.08)
-            rotateBackgroundY(normalizedX * 0.12)
-          }
+            moveBackgroundX(normalizedX * 4);
+            moveBackgroundY(normalizedY * 3);
+            rotateBackgroundX(normalizedY * -0.08);
+            rotateBackgroundY(normalizedX * 0.12);
+          };
 
           const resetPointerPosition = () => {
-            moveBackgroundX(0)
-            moveBackgroundY(0)
-            rotateBackgroundX(0)
-            rotateBackgroundY(0)
-          }
+            moveBackgroundX(0);
+            moveBackgroundY(0);
+            rotateBackgroundX(0);
+            rotateBackgroundY(0);
+          };
 
-          sharedScope.addEventListener('pointermove', handlePointerMove, {
+          sharedScope.addEventListener("pointermove", handlePointerMove, {
             passive: true,
-          })
-          sharedScope.addEventListener('pointerleave', resetPointerPosition)
+          });
+          sharedScope.addEventListener("pointerleave", resetPointerPosition);
 
           removeHomeBackgroundEffects = () => {
-            sharedScope.removeEventListener('pointermove', handlePointerMove)
-            sharedScope.removeEventListener('pointerleave', resetPointerPosition)
-            gsap.killTweensOf(sharedBackgroundPointer)
-          }
+            sharedScope.removeEventListener("pointermove", handlePointerMove);
+            sharedScope.removeEventListener(
+              "pointerleave",
+              resetPointerPosition,
+            );
+            gsap.killTweensOf(sharedBackgroundPointer);
+          };
         }
 
         const createSectionEffects = (strength: number) => {
-          const categories = root.querySelector<HTMLElement>('.home-categories')
+          const categories =
+            root.querySelector<HTMLElement>(".home-categories");
           if (categories) {
             gsap.fromTo(
               categories,
-              { '--category-track-x': '-8%' },
+              { "--category-track-x": "-8%" },
               {
-                '--category-track-x': `${18 * strength}%`,
-                ease: 'none',
+                "--category-track-x": `${18 * strength}%`,
+                ease: "none",
                 scrollTrigger: {
                   trigger: categories,
-                  start: 'top bottom',
-                  end: 'bottom top',
+                  start: "top bottom",
+                  end: "bottom top",
                   scrub: 1,
                 },
               },
-            )
+            );
           }
 
           const featured = root.querySelector<HTMLElement>(
-            '.home-featured-guides',
-          )
+            ".home-featured-guides",
+          );
           const featuredCards = featured?.querySelectorAll<HTMLElement>(
-            '.home-featured-guides__link',
-          )
+            ".home-featured-guides__link",
+          );
           if (featured && featuredCards?.length) {
             gsap.fromTo(
               featuredCards,
-              { '--featured-depth': 0.97 },
+              { "--featured-depth": 0.97 },
               {
-                '--featured-depth': 1,
-                ease: 'none',
+                "--featured-depth": 1,
+                ease: "none",
                 scrollTrigger: {
                   trigger: featured,
-                  start: 'top 82%',
-                  end: 'center 42%',
+                  start: "top 82%",
+                  end: "center 42%",
                   scrub: 0.9,
                 },
               },
-            )
+            );
           }
 
-          const aiTools = root.querySelector<HTMLElement>('.home-ai-tools')
+          const aiTools = root.querySelector<HTMLElement>(".home-ai-tools");
           if (aiTools) {
             gsap.fromTo(
               aiTools,
-              { '--ai-grid-y': '-3%' },
+              { "--ai-grid-y": "-3%" },
               {
-                '--ai-grid-y': `${8 * strength}%`,
-                ease: 'none',
+                "--ai-grid-y": `${8 * strength}%`,
+                ease: "none",
                 scrollTrigger: {
                   trigger: aiTools,
-                  start: 'top bottom',
-                  end: 'bottom top',
+                  start: "top bottom",
+                  end: "bottom top",
                   scrub: 1,
                 },
               },
-            )
+            );
           }
 
-          const resources = root.querySelector<HTMLElement>('.home-resources')
+          const resources = root.querySelector<HTMLElement>(".home-resources");
           if (resources) {
             gsap.fromTo(
               resources,
-              { '--resources-reveal': '100%', '--resources-layer-y': '-2%' },
+              { "--resources-reveal": "100%", "--resources-layer-y": "-2%" },
               {
-                '--resources-reveal': '0%',
-                '--resources-layer-y': `${5 * strength}%`,
-                ease: 'none',
+                "--resources-reveal": "0%",
+                "--resources-layer-y": `${5 * strength}%`,
+                ease: "none",
                 scrollTrigger: {
                   trigger: resources,
-                  start: 'top 88%',
-                  end: 'center 45%',
+                  start: "top 88%",
+                  end: "center 45%",
                   scrub: 0.9,
                 },
               },
-            )
+            );
           }
-        }
+        };
 
-        media.add('(min-width: 1280px)', () => createSectionEffects(1))
-        media.add('(min-width: 768px) and (max-width: 1279px)', () =>
+        media.add("(min-width: 1280px)", () => createSectionEffects(1));
+        media.add("(min-width: 768px) and (max-width: 1279px)", () =>
           createSectionEffects(0.6),
-        )
+        );
 
-        const finalCta = root.querySelector<HTMLElement>('.home-final-cta')
+        const finalCta = root.querySelector<HTMLElement>(".home-final-cta");
         const finalEyebrow = finalCta?.querySelector<HTMLElement>(
-          '.home-final-cta__eyebrow',
-        )
+          ".home-final-cta__eyebrow",
+        );
         const finalTitleLine = finalCta?.querySelector<HTMLElement>(
-          '.home-final-cta__title-line',
-        )
+          ".home-final-cta__title-line",
+        );
         const finalDescription = finalCta?.querySelector<HTMLElement>(
-          '.home-final-cta__description',
-        )
+          ".home-final-cta__description",
+        );
         const finalActions = finalCta?.querySelector<HTMLElement>(
-          '.home-final-cta__actions',
-        )
+          ".home-final-cta__actions",
+        );
 
         if (
           finalCta &&
@@ -346,15 +392,15 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
             .timeline({
               scrollTrigger: {
                 trigger: finalCta,
-                start: 'top 75%',
+                start: "top 75%",
                 once: true,
               },
-              defaults: { ease: 'power3.out' },
+              defaults: { ease: "power3.out" },
             })
             .fromTo(
               finalCta,
-              { '--cta-reveal': '100%' },
-              { '--cta-reveal': '0%', duration: 0.8 },
+              { "--cta-reveal": "100%" },
+              { "--cta-reveal": "0%", duration: 0.8 },
             )
             .fromTo(
               finalEyebrow,
@@ -379,36 +425,36 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
               { scale: 0.96, opacity: 0 },
               { scale: 1, opacity: 1, duration: 0.5 },
               0.62,
-            )
+            );
         }
 
-        return removeHomeBackgroundEffects
-      })
+        return removeHomeBackgroundEffects;
+      });
 
-      media.add('(prefers-reduced-motion: reduce)', () => {
+      media.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
           root.querySelectorAll(
-            '.home-hero__service-name, .home-hero__title-line, .home-hero__description, .home-hero__cta, .home-final-cta__eyebrow, .home-final-cta__title-line, .home-final-cta__description, .home-final-cta__actions',
+            ".home-hero__service-name, .home-hero__title-line, .home-hero__description, .home-hero__cta, .home-final-cta__eyebrow, .home-final-cta__title-line, .home-final-cta__description, .home-final-cta__actions",
           ),
-          { clearProps: 'all' },
-        )
+          { clearProps: "all" },
+        );
         gsap.set(
           root.querySelectorAll(
-            '.home-hero, .home-visual-group__background, .home-visual-group__background-pointer, .home-visual-group__background-ambient, .home-final-cta',
+            ".home-hero, .home-visual-group__background, .home-visual-group__background-pointer, .home-visual-group__background-ambient, .home-final-cta",
           ),
-          { clearProps: 'all' },
-        )
-      })
-    }, root)
+          { clearProps: "all" },
+        );
+      });
+    }, root);
 
     return () => {
-      stopWatchingLoader()
-      ScrollTrigger.getById('home-fixed-content-background')?.kill()
+      stopWatchingLoader();
+      ScrollTrigger.getById("home-fixed-background-range")?.kill();
       gsap.killTweensOf(
-        root.querySelector<HTMLElement>('.home-visual-group__background'),
-      )
-      media.revert()
-      context.revert()
-    }
-  }, [rootRef])
+        root.querySelector<HTMLElement>(".home-visual-group__background"),
+      );
+      media.revert();
+      context.revert();
+    };
+  }, [rootRef]);
 }

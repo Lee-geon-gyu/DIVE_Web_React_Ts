@@ -1,10 +1,21 @@
 import { gsap } from "gsap";
 import { useLayoutEffect, useRef } from "react";
 import { useLenisRef } from "../../app/providers/lenis-context";
+import letterD from "../../assets/images/logo/loader/dive-letter-d.png";
+import letterE from "../../assets/images/logo/loader/dive-letter-e.png";
+import letterI from "../../assets/images/logo/loader/dive-letter-i.png";
+import letterV from "../../assets/images/logo/loader/dive-letter-v.png";
+import fullLogo from "../../assets/images/logo/loader/dive-logo-full.png";
 import "./app-loader.css";
 
 const LOADING_MESSAGE = "Drive Into Verified Experiences.";
 const LOADER_WORDS = ["Drive", "Into", "Verified", "Experiences."] as const;
+const LOADER_INITIALS = [
+  { letter: "D", src: letterD, width: 563, height: 480 },
+  { letter: "I", src: letterI, width: 138, height: 480 },
+  { letter: "V", src: letterV, width: 533, height: 480 },
+  { letter: "E", src: letterE, width: 482, height: 480 },
+] as const;
 const BLOCKED_SCROLL_KEYS = new Set([
   "ArrowUp",
   "ArrowDown",
@@ -45,6 +56,8 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
       "(prefers-reduced-motion: reduce)",
     ).matches;
     let isPageRestored = false;
+    let isCancelled = false;
+    let context: gsap.Context | undefined;
     let removeResizeListener: () => void = () => undefined;
 
     const resetInitialScrollPosition = () => {
@@ -130,7 +143,27 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
       onComplete();
     };
 
-    const context = gsap.context(() => {
+    const initializeLoader = async () => {
+      const assetImages = Array.from(
+        loader.querySelectorAll<HTMLImageElement>(".app-loader__asset-image"),
+      );
+
+      await Promise.all(
+        assetImages.map(async (image) => {
+          if (typeof image.decode === "function") {
+            await image.decode().catch(() => undefined);
+          } else if (!image.complete) {
+            await new Promise<void>((resolve) => {
+              image.addEventListener("load", () => resolve(), { once: true });
+              image.addEventListener("error", () => resolve(), { once: true });
+            });
+          }
+        }),
+      );
+
+      if (isCancelled) return;
+
+      context = gsap.context(() => {
       const characters = gsap.utils.toArray<HTMLElement>(
         ".app-loader__character",
       );
@@ -141,15 +174,18 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
         ".app-loader__character--remaining",
       );
       const phrase = loader.querySelector<HTMLElement>(".app-loader__phrase");
-      const logoLayout = loader.querySelector<HTMLElement>(
-        ".app-loader__logo-layout",
+      const assembly = loader.querySelector<HTMLElement>(
+        ".app-loader__logo-assembly",
       );
-      const logoLayoutLetters = gsap.utils.toArray<HTMLElement>(
-        ".app-loader__logo-layout-letter",
+      const assemblyLetters = gsap.utils.toArray<HTMLElement>(
+        ".app-loader__assembly-letter",
+      );
+      const logoMotion = loader.querySelector<HTMLElement>(
+        ".app-loader__logo-motion",
       );
       const logo = loader.querySelector<HTMLElement>(".app-loader__logo");
-      const headerLogo = document.querySelector<HTMLElement>(
-        ".site-header__logo-image",
+      const headerLogo = document.querySelector<HTMLImageElement>(
+        ".site-header__inner > .site-header__logo .site-header__logo-image",
       );
       const header = document.querySelector<HTMLElement>(".site-header");
       const scrollProgress =
@@ -159,8 +195,9 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
         characters.length === 0 ||
         initials.length !== 4 ||
         !phrase ||
-        !logoLayout ||
-        logoLayoutLetters.length !== 4 ||
+        !assembly ||
+        assemblyLetters.length !== 4 ||
+        !logoMotion ||
         !logo ||
         !headerLogo ||
         !header
@@ -169,11 +206,11 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
         return;
       }
 
-      const getLogoLayoutOffset = (index: number, letter: HTMLElement) => {
+      const getAssemblyOffset = (index: number, letter: HTMLElement) => {
         const letterRect = letter.getBoundingClientRect();
-        const targetRect = logoLayoutLetters[index]?.getBoundingClientRect();
+        const targetRect = assemblyLetters[index]?.getBoundingClientRect();
 
-        if (!targetRect) return { x: 0, y: 0, scale: 1 };
+        if (!targetRect) return { x: 0, y: 0 };
 
         return {
           x:
@@ -184,27 +221,62 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
             targetRect.top +
             targetRect.height / 2 -
             (letterRect.top + letterRect.height / 2),
-          scale: targetRect.height / letterRect.height,
         };
       };
 
-      const getHeaderLogoTransform = () => {
-        const logoRect = logo.getBoundingClientRect();
-        const headerRect = headerLogo.getBoundingClientRect();
-        return {
-          x:
-            headerRect.left +
-            headerRect.width / 2 -
-            (logoRect.left + logoRect.width / 2),
-          y:
-            headerRect.top +
-            headerRect.height / 2 -
-            (logoRect.top + logoRect.height / 2),
-          scale: headerRect.width / logoRect.width,
-        };
+      const getSharedLetterScale = () => {
+        const inlineHeight = initials[0]?.getBoundingClientRect().height;
+        const finalHeight = assemblyLetters[0]?.getBoundingClientRect().height;
+
+        return inlineHeight ? finalHeight / inlineHeight : 1;
+      };
+
+      let headerTargetRect: DOMRect | undefined;
+
+      const normalizeLogoMotion = () => {
+        const sourceRect = logoMotion.getBoundingClientRect();
+
+        logoMotion.style.translate = "none";
+        gsap.set(logoMotion, {
+          position: "fixed",
+          left: sourceRect.left,
+          top: sourceRect.top,
+          width: sourceRect.width,
+          height: sourceRect.height,
+          x: 0,
+          y: 0,
+          xPercent: 0,
+          yPercent: 0,
+          scale: 1,
+          transformOrigin: "center center",
+        });
+
+        headerTargetRect = headerLogo.getBoundingClientRect();
+      };
+
+      const correctFinalLogoRect = () => {
+        const sourceRect = logoMotion.getBoundingClientRect();
+        const targetRect = headerLogo.getBoundingClientRect();
+
+        if (
+          Math.abs(sourceRect.left - targetRect.left) <= 1 &&
+          Math.abs(sourceRect.top - targetRect.top) <= 1 &&
+          Math.abs(sourceRect.width - targetRect.width) <= 1 &&
+          Math.abs(sourceRect.height - targetRect.height) <= 1
+        ) {
+          return;
+        }
+
+        gsap.set(logoMotion, {
+          left: targetRect.left,
+          top: targetRect.top,
+          width: targetRect.width,
+          height: targetRect.height,
+        });
       };
 
       gsap.set(characters, { opacity: 0, y: 10, filter: "blur(8px)" });
+      gsap.set(assembly, { opacity: 0 });
       gsap.set(logo, { opacity: 0 });
       gsap.set(header, { autoAlpha: 0 });
       gsap.set(headerLogo, { autoAlpha: 0 });
@@ -225,6 +297,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
             duration: 0.2,
           })
           .set(phrase, { opacity: 0 })
+          .set(assembly, { opacity: 0 })
           .set(logo, { opacity: 1 })
           .set(headerLogo, { autoAlpha: 1 })
           .set(header, { autoAlpha: 1 })
@@ -255,39 +328,37 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
         })
         // STEP 4 - D I V E Hold (현재 0.2초)
         .to({}, { duration: 0 })
-        // STEP 5A - D I V E Scale Up In Place
-        .to(
-          initials,
-          {
-            scale: (index, letter: HTMLElement) =>
-              getLogoLayoutOffset(index, letter).scale,
-            opacity: 1,
-            duration: 0.5,
-            ease: "power3.out",
-          },
-          "lettersScale",
-        )
-        // STEP 5B - Keep Scale And Move To The PNG Artwork Layout
+        // STEP 5 - Enlarge every initial by the same shared ratio
+        .to(initials, {
+          scale: getSharedLetterScale,
+          opacity: 1,
+          duration: 0.5,
+          ease: "power3.out",
+        })
+        // STEP 6 - Move the enlarged images into the gap-zero assembly layout
         .to(
           initials,
           {
             x: (index, letter: HTMLElement) =>
-              getLogoLayoutOffset(index, letter).x,
+              getAssemblyOffset(index, letter).x,
             y: (index, letter: HTMLElement) =>
-              getLogoLayoutOffset(index, letter).y,
+              getAssemblyOffset(index, letter).y,
             opacity: 1,
-            duration: 1.5,
+            duration: 1,
             ease: "power3.inOut",
           },
           "lettersMove",
         )
-        // STEP 6 - HTML letters and PNG logo crossfade together
+        // STEP 7 - Hand off to the identical final-size assembly group
+        .set(initials, { opacity: 0 })
+        .set(assembly, { opacity: 1 })
+        // STEP 8 - Assembly group and full logo crossfade together
         .addLabel("logoCrossfade")
         .to(
-          initials,
+          assembly,
           {
             opacity: 0,
-            duration: 1.5,
+            duration: 0.35,
             ease: "power1.inOut",
           },
           "logoCrossfade",
@@ -296,25 +367,33 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
           logo,
           {
             opacity: 1,
-            duration: 2.5,
+            duration: 0.35,
             ease: "power1.inOut",
           },
           "logoCrossfade",
         )
-        // STEP 7 - PNG Logo Move To Header
+        // STEP 9 - PNG Logo Move To Header
+        .call(normalizeLogoMotion)
         .to(
-          logo,
+          logoMotion,
           {
-            x: () => getHeaderLogoTransform().x,
-            y: () => getHeaderLogoTransform().y,
-            scale: () => getHeaderLogoTransform().scale,
+            left: () => headerTargetRect?.left ?? 0,
+            top: () => headerTargetRect?.top ?? 0,
+            width: () => headerTargetRect?.width ?? 0,
+            height: () => headerTargetRect?.height ?? 0,
             duration: 1.25,
             ease: "power3.inOut",
           },
           "logoToHeader",
         )
-        // STEP 8 - Header and its real logo take over after arrival
+        .call(correctFinalLogoRect)
+        // STEP 10 - Header and its real logo take over after arrival
         .addLabel("headerReveal")
+        .call(
+          () => window.dispatchEvent(new Event("dive:loader-header-reveal")),
+          [],
+          "headerReveal",
+        )
         .to(
           [header, scrollProgress].filter(Boolean),
           {
@@ -342,17 +421,21 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
           },
           "headerReveal",
         )
-        // STEP 9 - Reveal Site / Loader Fade Out
+        // STEP 11 - Reveal Site / Loader Fade Out
         .to(loader, { opacity: 0, duration: 0.2, ease: "power2.out" });
 
       const handleResize = () => timeline.invalidate();
       window.addEventListener("resize", handleResize, { passive: true });
       removeResizeListener = () =>
         window.removeEventListener("resize", handleResize);
-    }, loader);
+      }, loader);
+    };
+
+    void initializeLoader();
 
     return () => {
-      context.revert();
+      isCancelled = true;
+      context?.revert();
       removeResizeListener();
       restorePage();
     };
@@ -370,7 +453,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
 
       <div className="app-loader__stage" aria-hidden="true">
         <p className="app-loader__phrase">
-          {LOADER_WORDS.map((word) => (
+          {LOADER_WORDS.map((word, wordIndex) => (
             <span className="app-loader__word" key={word}>
               {word.split("").map((character, index) => (
                 <span
@@ -379,27 +462,52 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
                   }`}
                   key={`${word}-${index}`}
                 >
-                  {character}
+                  {index === 0 ? (
+                    <span className="app-loader__letter-size">
+                      <img
+                        className="app-loader__asset-image app-loader__letter-image"
+                        src={LOADER_INITIALS[wordIndex].src}
+                        alt=""
+                        width={LOADER_INITIALS[wordIndex].width}
+                        height={LOADER_INITIALS[wordIndex].height}
+                      />
+                    </span>
+                  ) : (
+                    <span className="app-loader__character-text">
+                      {character}
+                    </span>
+                  )}
                 </span>
               ))}
             </span>
           ))}
         </p>
-        <p className="app-loader__logo-layout">
-          {"DIVE".split("").map((letter) => (
-            <span className="app-loader__logo-layout-letter" key={letter}>
-              {letter}
+        <div className="app-loader__logo-assembly">
+          {LOADER_INITIALS.map(({ letter, src, width, height }) => (
+            <span
+              className="app-loader__assembly-letter"
+              key={letter}
+            >
+              <img
+                className="app-loader__asset-image app-loader__assembly-image"
+                src={src}
+                alt=""
+                width={width}
+                height={height}
+              />
             </span>
           ))}
-        </p>
-        <img
-          className="app-loader__logo"
-          src={`${import.meta.env.BASE_URL}DIVE_logo_Typo_text.png`}
-          alt=""
-          width="1724"
-          height="500"
-          decoding="async"
-        />
+        </div>
+        <div className="app-loader__logo-motion">
+          <img
+            className="app-loader__asset-image app-loader__logo"
+            src={fullLogo}
+            alt=""
+            width="1715"
+            height="480"
+            decoding="async"
+          />
+        </div>
       </div>
     </div>
   );

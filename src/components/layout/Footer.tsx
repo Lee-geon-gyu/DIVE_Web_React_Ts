@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import diveLogoWhite from '../../assets/common/dive-logo-white.png'
 import { primaryNavigationItems } from '../../data/navigation'
 import './footer.css'
 
@@ -9,7 +10,14 @@ export function Footer() {
         <div className="content-container site-footer__inner">
           <div className="site-footer__summary" data-aos="fade-up">
             <Link className="site-footer__logo" to="/" aria-label="DIVE 홈으로 이동">
-              DIVE
+              <img
+                className="site-footer__logo-image"
+                src={diveLogoWhite}
+                alt=""
+                width="1734"
+                height="480"
+                decoding="async"
+              />
             </Link>
             <p className="site-footer__description">
               UI/UX 디자인과 웹 퍼블리싱 입문자를 위한 정보 큐레이션 플랫폼

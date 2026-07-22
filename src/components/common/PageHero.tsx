@@ -22,6 +22,7 @@ export function PageHero({
 
   return (
     <section ref={heroRef} className="page-hero" aria-labelledby={titleId}>
+      <div className="page-hero__background" aria-hidden="true" />
       <div className="page-container">
         <div className="content-container page-hero__inner">
           <p className="page-hero__eyebrow" data-aos="fade-up">

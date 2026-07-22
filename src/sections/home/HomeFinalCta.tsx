@@ -10,7 +10,7 @@ export function HomeFinalCta() {
       <div className="page-container">
         <div className="content-container">
           <div className="home-final-cta__content">
-            <p className="home-final-cta__eyebrow">Dive into better digital experiences.</p>
+            <p className="home-final-cta__eyebrow">Drive into better digital experiences.</p>
             <h2 id={titleId} className="home-final-cta__title">
               <span className="home-final-cta__title-mask">
                 <span className="home-final-cta__title-line">

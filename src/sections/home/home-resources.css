@@ -6,21 +6,7 @@
   width: 100%;
   overflow: clip;
   padding-block: var(--section-padding-block);
-  background-color: var(--color-background-subtle);
-}
-
-.home-resources::before {
-  position: absolute;
-  z-index: -1;
-  inset: var(--space-6) var(--page-padding);
-  border: 1px solid var(--color-primary-soft);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-primary-soft);
-  clip-path: inset(0 0 var(--resources-reveal) 0);
-  content: "";
-  opacity: 0.32;
-  pointer-events: none;
-  transform: translate3d(0, var(--resources-layer-y), 0);
+  background-color: transparent;
 }
 
 .home-resources__header {
@@ -88,10 +74,6 @@
 }
 
 @media (max-width: 767px) {
-  .home-resources {
-    padding-block: var(--space-16);
-  }
-
   .home-resources__header {
     align-items: flex-start;
     flex-direction: column;

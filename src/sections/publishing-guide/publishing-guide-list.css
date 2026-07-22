@@ -14,6 +14,50 @@
   min-width: 0;
 }
 
+.publishing-guide-list--home-light {
+  color-scheme: light;
+  --color-background: #ffffff;
+  --color-background-subtle: #f7f9fc;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f1f5fb;
+  --color-text-primary: #111318;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #7b8494;
+  --color-border: rgb(17 24 39 / 10%);
+  --color-border-strong: rgb(17 24 39 / 12%);
+  --color-divider: rgb(17 24 39 / 10%);
+
+  position: relative;
+  z-index: 1;
+  background-color: #ffffff;
+}
+
+.publishing-guide-list--home-light .publishing-guide-card {
+  border-color: rgb(17 24 39 / 10%);
+  background-color: #ffffff;
+  box-shadow: 0 10px 28px rgb(15 23 42 / 5%);
+}
+
+.publishing-guide-list--home-light .publishing-guide-card:hover,
+.publishing-guide-list--home-light .publishing-guide-card:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 14px 32px rgb(15 23 42 / 9%);
+}
+
+.publishing-guide-list--home-light :is(
+    .explorer-controls__input,
+    .explorer-controls__select,
+    .explorer-controls__filter-button,
+    .empty-state
+  ) {
+  border-color: rgb(17 24 39 / 12%);
+  background-color: #ffffff;
+}
+
+.publishing-guide-list--home-light .explorer-controls__input::placeholder {
+  color: #8b95a5;
+}
+
 @media (max-width: 767px) {
   .publishing-guide-list__grid {
     gap: var(--space-6);

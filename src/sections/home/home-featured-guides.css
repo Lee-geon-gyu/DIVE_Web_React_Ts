@@ -3,7 +3,7 @@
   width: 100%;
   overflow: clip;
   padding-block: var(--section-padding-block);
-  background-color: var(--color-background-subtle);
+  background-color: transparent;
 }
 
 .home-featured-guides__heading {
@@ -103,10 +103,6 @@
 }
 
 @media (max-width: 767px) {
-  .home-featured-guides {
-    padding-block: var(--space-16);
-  }
-
   .home-featured-guides__list {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);

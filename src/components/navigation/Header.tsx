@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import menuCloseWhite from '../../assets/common/menu-close-white.png'
 import { primaryNavigationItems } from '../../data/navigation'
 import './header.css'
+
+const headerLogoSrc = `${import.meta.env.BASE_URL}DIVE_logo_Typo.png`
 
 function getNavigationClassName({ isActive }: { isActive: boolean }) {
   return isActive
@@ -14,8 +17,6 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMenuClosing, setIsMenuClosing] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isHeaderHidden, setIsHeaderHidden] = useState(false)
-  const headerRef = useRef<HTMLElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
   const isMenuVisible = isMenuOpen || isMenuClosing
@@ -24,7 +25,6 @@ export function Header() {
     const frameId = window.requestAnimationFrame(() => {
       setIsMenuOpen(false)
       setIsMenuClosing(false)
-      setIsHeaderHidden(false)
       setIsScrolled(window.scrollY > 24)
     })
 
@@ -32,30 +32,11 @@ export function Header() {
   }, [location.pathname])
 
   useEffect(() => {
-    let previousScrollY = window.scrollY
     let frameId = 0
 
     const updateHeader = () => {
       frameId = 0
-      const currentScrollY = Math.max(window.scrollY, 0)
-      const delta = currentScrollY - previousScrollY
-      const isDesktopOrTablet = window.matchMedia('(min-width: 768px)').matches
-      const hasHeaderFocus = headerRef.current?.contains(document.activeElement)
-
-      setIsScrolled(currentScrollY > 24)
-
-      if (
-        !isDesktopOrTablet ||
-        isMenuVisible ||
-        hasHeaderFocus ||
-        currentScrollY < 80
-      ) {
-        setIsHeaderHidden(false)
-      } else if (Math.abs(delta) >= 8) {
-        setIsHeaderHidden(delta > 0 && currentScrollY > 120)
-      }
-
-      previousScrollY = currentScrollY
+      setIsScrolled(window.scrollY > 24)
     }
 
     const handleScroll = () => {
@@ -69,7 +50,7 @@ export function Header() {
       window.removeEventListener('scroll', handleScroll)
       if (frameId) window.cancelAnimationFrame(frameId)
     }
-  }, [isMenuVisible, location.pathname])
+  }, [location.pathname])
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false)
@@ -140,11 +121,9 @@ export function Header() {
   return (
     <>
       <header
-        ref={headerRef}
         className={`site-header${isScrolled ? ' is-scrolled' : ''}${
-          isHeaderHidden ? ' is-hidden' : ''
-        }${isMenuVisible ? ' is-menu-open' : ''}`}
-        onFocusCapture={() => setIsHeaderHidden(false)}
+          isMenuVisible ? ' is-menu-open' : ''
+        }`}
       >
         <div className="page-container">
           <div className="content-container site-header__inner">
@@ -156,8 +135,8 @@ export function Header() {
             >
               <img
                 className="site-header__logo-image"
-                src={`${import.meta.env.BASE_URL}DIVE_logo_Typo_text.png`}
-                alt="DIVE 홈"
+                src={headerLogoSrc}
+                alt=""
                 width="1724"
                 height="500"
                 decoding="async"
@@ -221,14 +200,29 @@ export function Header() {
             >
               <div className="site-header__drawer-heading">
                 <span className="site-header__logo" aria-hidden="true">
-                  DIVE
+                  <img
+                    className="site-header__logo-image"
+                    src={headerLogoSrc}
+                    alt=""
+                    width="1724"
+                    height="500"
+                    decoding="async"
+                  />
                 </span>
                 <button
                   className="site-header__close-button"
                   type="button"
+                  aria-label="메뉴 닫기"
                   onClick={closeMenu}
                 >
-                  메뉴 닫기
+                  <img
+                    className="site-header__close-image"
+                    src={menuCloseWhite}
+                    alt=""
+                    width="197"
+                    height="193"
+                    decoding="async"
+                  />
                 </button>
               </div>
 

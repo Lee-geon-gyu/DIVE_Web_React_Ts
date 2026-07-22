@@ -1,0 +1,136 @@
+.ai-background-experience {
+  position: relative;
+  isolation: isolate;
+  background-color: transparent;
+}
+
+.ai-transition-reveal {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.ai-transition-reveal__media {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  background-color: #000000;
+  clip-path: circle(5px at 50% 50%);
+  pointer-events: none;
+  transition: none;
+  will-change: clip-path;
+}
+
+.ai-transition-reveal__image {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
+  transform: none;
+  transform-origin: center center;
+  user-select: none;
+}
+
+.ai-transition-reveal__media::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 8%) 0%,
+    rgb(0 0 0 / 18%) 50%,
+    rgb(0 0 0 / 28%) 100%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.ai-background-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ai-background-content :is(.ai-tool-list, .publishing-guide-list) {
+  background-color: transparent;
+}
+
+.ai-background-content .ai-tool-list.ai-tool-list--home-light {
+  background-color: transparent;
+}
+
+.ai-background-content
+  .publishing-guide-list.publishing-guide-list--home-light {
+  background-color: #ffffff;
+}
+
+.ai-background-experience .home-ai-tools-spacing {
+  position: relative;
+  height: 750px;
+  overflow: hidden;
+  isolation: isolate;
+  background: transparent;
+}
+
+.home-ai-tools-spacing__transparent-window {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: 115%;
+  height: 100%;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow:
+    0 0 0 9999px #ffffff,
+    inset 0 0 0 1px rgb(255 255 255 / 12%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .home-ai-tools-spacing__transparent-window {
+    width: calc(100% - 48px);
+    height: clamp(280px, 45vw, 460px);
+  }
+}
+
+@media (max-width: 767px) {
+  .home-ai-tools-spacing__transparent-window {
+    width: calc(100% - 32px);
+    height: 240px;
+    border-radius: 48px;
+  }
+}
+
+.ai-background-content :is(
+    .explorer-layout__panel,
+    .ai-tool-detail-card,
+    .publishing-guide-card
+  ) {
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 767px) {
+  .ai-transition-reveal,
+  .ai-transition-reveal__media {
+    height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-transition-reveal__media {
+    will-change: auto;
+  }
+
+  .ai-transition-reveal__media {
+    clip-path: circle(80vmax at 50% 50%);
+  }
+}

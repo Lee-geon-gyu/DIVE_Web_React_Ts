@@ -2,7 +2,6 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ScrollTrigger } from '../../lib/animation/gsap'
 import './aos-manager.css'
 
 let isAosInitialized = false
@@ -32,8 +31,6 @@ export function AosManager() {
     firstFrameId = window.requestAnimationFrame(() => {
       secondFrameId = window.requestAnimationFrame(() => {
         AOS.refreshHard()
-        ScrollTrigger.refresh()
-        ScrollTrigger.update()
       })
     })
 

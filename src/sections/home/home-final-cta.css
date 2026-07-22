@@ -5,14 +5,13 @@
   width: 100%;
   overflow: clip;
   padding-block: var(--section-padding-block);
-  background-color: var(--color-background);
+  background: linear-gradient(var(--color-background-subtle), 40%, var(--color-primary-active), 60%, var(--color-background-subtle));
 }
 
 .home-final-cta::before {
   position: absolute;
   z-index: -1;
   inset: 0;
-  background-color: var(--color-primary-soft);
   clip-path: inset(0 var(--cta-reveal) 0 0);
   content: "";
   pointer-events: none;

@@ -4,19 +4,7 @@
   width: 100%;
   overflow: clip;
   padding-block: var(--section-padding-block);
-  background-color: var(--color-background);
-}
-
-.home-categories::before {
-  position: absolute;
-  top: var(--space-12);
-  left: -10%;
-  width: 55%;
-  height: 1px;
-  background-color: var(--color-primary-soft);
-  content: "";
-  pointer-events: none;
-  transform: translate3d(var(--category-track-x), 0, 0);
+  background-color: transparent;
 }
 
 .home-categories__heading {
@@ -91,10 +79,6 @@
 }
 
 @media (max-width: 767px) {
-  .home-categories {
-    padding-block: var(--space-16);
-  }
-
   .home-categories__list {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);

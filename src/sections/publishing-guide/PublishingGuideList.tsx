@@ -22,7 +22,13 @@ const publishingGuideSortOptions: ExplorerSortOption[] = [
   { value: NAME_SORT, label: '이름순' },
 ]
 
-export function PublishingGuideList() {
+interface PublishingGuideListProps {
+  theme?: 'default' | 'home-light'
+}
+
+export function PublishingGuideList({
+  theme = 'default',
+}: PublishingGuideListProps) {
   const titleId = useId()
   const [hasExplorerInteracted, setHasExplorerInteracted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -86,7 +92,14 @@ export function PublishingGuideList() {
   }
 
   return (
-    <section className="publishing-guide-list" aria-labelledby={titleId}>
+    <section
+      className={`publishing-guide-list${
+        theme === 'home-light'
+          ? ' publishing-guide-list--home-light'
+          : ''
+      }`}
+      aria-labelledby={titleId}
+    >
       <div className="page-container">
         <div className="content-container explorer-layout">
           <div className="explorer-layout__panel" data-aos="explorer-panel">
