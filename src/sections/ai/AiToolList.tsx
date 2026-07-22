@@ -1,34 +1,11 @@
-import { useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef } from 'react'
 import { useLenisRef } from '../../app/providers/lenis-context'
 import { AiToolDetailCard } from '../../components/ai/AiToolDetailCard'
-import { EmptyState } from '../../components/common/EmptyState'
 import { SectionHeader } from '../../components/common/SectionHeader'
-import {
-  ExplorerControls,
-  type ExplorerFilterOption,
-  type ExplorerSortOption,
-} from '../../components/common/explorer/ExplorerControls'
 import { aiTools } from '../../data/aiTools'
 import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
 import './ai-tool-list.css'
 
-const ALL_CATEGORIES = '전체'
-const aiCategories = [
-  ALL_CATEGORIES,
-  ...new Set(aiTools.map((tool) => tool.category)),
-]
-const aiCategoryOptions: ExplorerFilterOption[] = aiCategories.map(
-  (category) => ({
-    value: category,
-    label: category,
-  }),
-)
-const DEFAULT_SORT = 'default'
-const NAME_SORT = 'name'
-const aiSortOptions: ExplorerSortOption[] = [
-  { value: DEFAULT_SORT, label: '추천순' },
-  { value: NAME_SORT, label: '이름순' },
-]
 const DOWN_SCROLL_KEYS = new Set(['ArrowDown', 'PageDown', 'End'])
 const UP_SCROLL_KEYS = new Set(['ArrowUp', 'PageUp', 'Home'])
 
@@ -50,53 +27,9 @@ export function AiToolList({
   const pinRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLUListElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
   const revealStateRef = useRef<AiRevealState>('visible')
   const gateModeRef = useRef<AiGateMode>('none')
-  const [hasExplorerInteracted, setHasExplorerInteracted] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES)
-  const [selectedSort, setSelectedSort] = useState(DEFAULT_SORT)
-
-  const filteredAiTools = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLocaleLowerCase()
-
-    const filteredTools = aiTools.filter((tool) => {
-      const matchesCategory =
-        selectedCategory === ALL_CATEGORIES ||
-        tool.category === selectedCategory
-
-      if (!matchesCategory) {
-        return false
-      }
-
-      if (!normalizedQuery) {
-        return true
-      }
-
-      const searchableContent = [
-        tool.name,
-        tool.category,
-        tool.purpose,
-        tool.summary,
-        ...tool.useCases,
-        tool.recommendedFor,
-        tool.accessType,
-      ]
-        .join(' ')
-        .toLocaleLowerCase()
-
-      return searchableContent.includes(normalizedQuery)
-    })
-
-    if (selectedSort === NAME_SORT) {
-      return [...filteredTools].sort((a, b) =>
-        a.name.localeCompare(b.name, 'ko'),
-      )
-    }
-
-    return filteredTools
-  }, [searchQuery, selectedCategory, selectedSort])
 
   useLayoutEffect(() => {
     if (!enablePinnedScroll) return
@@ -120,10 +53,15 @@ export function AiToolList({
         '(prefers-reduced-motion: reduce)',
       ).matches
 
-      const isEditableTarget = (target: EventTarget | null) =>
-        target instanceof HTMLElement &&
-        (target.isContentEditable ||
-          ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+      const isInteractiveTarget = (target: EventTarget | null) => {
+        if (!(target instanceof HTMLElement)) return false
+
+        return Boolean(
+          target.closest(
+            'input, textarea, select, option, button, a, [contenteditable="true"], [role="button"], [role="combobox"], [role="listbox"]',
+          ),
+        )
+      }
 
       const preventLockedInput = (event: Event) => event.preventDefault()
       const preventLockedKey = (event: KeyboardEvent) => {
@@ -133,7 +71,7 @@ export function AiToolList({
           DOWN_SCROLL_KEYS.has(event.key) ||
           UP_SCROLL_KEYS.has(event.key)
 
-        if (!isEditableTarget(event.target) && isScrollKey) {
+        if (!isInteractiveTarget(event.target) && isScrollKey) {
           event.preventDefault()
         }
       }
@@ -221,7 +159,7 @@ export function AiToolList({
 
         revealTween = gsap.to(stage, {
           autoAlpha: targetState === 'visible' ? 1 : 0,
-          duration: prefersReducedMotion ? 0.05 : 1.25,
+          duration: prefersReducedMotion ? 0.05 : 0.5,
           ease: 'power1.out',
           overwrite: true,
           onComplete: () => {
@@ -282,7 +220,7 @@ export function AiToolList({
       }
 
       function handleKeyDown(event: KeyboardEvent) {
-        if (isEditableTarget(event.target)) return
+        if (isInteractiveTarget(event.target)) return
 
         if (event.key === ' ' || event.key === 'Spacebar') {
           handleDirectionalInput(event.shiftKey ? 'up' : 'down', event)
@@ -404,29 +342,7 @@ export function AiToolList({
       })
       gsap.set(track, { clearProps: 'transform' })
     }
-  }, [enablePinnedScroll, filteredAiTools, lenisRef])
-
-  const resetFilters = () => {
-    setHasExplorerInteracted(true)
-    setSearchQuery('')
-    setSelectedCategory(ALL_CATEGORIES)
-    setSelectedSort(DEFAULT_SORT)
-  }
-
-  const handleSearchQueryChange = (value: string) => {
-    setHasExplorerInteracted(true)
-    setSearchQuery(value)
-  }
-
-  const handleCategoryChange = (value: string) => {
-    setHasExplorerInteracted(true)
-    setSelectedCategory(value)
-  }
-
-  const handleSortChange = (value: string) => {
-    setHasExplorerInteracted(true)
-    setSelectedSort(value)
-  }
+  }, [enablePinnedScroll, lenisRef])
 
   return (
     <section
@@ -449,30 +365,8 @@ export function AiToolList({
                   eyebrow="Explore tools"
                   title="AI Tools"
                   description="작업 단계와 필요한 도움을 기준으로 각 도구의 활용 방법을 살펴보세요."
-                  status={
-                    filteredAiTools.length > 0
-                      ? `총 ${filteredAiTools.length}개의 AI 도구`
-                      : '검색 결과가 없습니다'
-                  }
-                  announceStatus
+                  status={`총 ${aiTools.length}개의 AI 도구`}
                   enableAos={!enablePinnedScroll}
-                />
-
-                <ExplorerControls
-                  searchInputId="ai-tool-search"
-                  resultsId="ai-tool-results"
-                  searchLabel="AI 도구 검색"
-                  searchPlaceholder="도구 이름, 활용 목적, 카테고리 검색"
-                  searchQuery={searchQuery}
-                  onSearchQueryChange={handleSearchQueryChange}
-                  filterLabel="카테고리"
-                  filterOptions={aiCategoryOptions}
-                  selectedFilter={selectedCategory}
-                  onSelectedFilterChange={handleCategoryChange}
-                  sortLabel="정렬"
-                  sortOptions={aiSortOptions}
-                  selectedSort={selectedSort}
-                  onSelectedSortChange={handleSortChange}
                 />
               </div>
 
@@ -480,23 +374,15 @@ export function AiToolList({
                 ref={viewportRef}
                 className="explorer-layout__results ai-tool-list__viewport"
               >
-                {filteredAiTools.length > 0 ? (
-                  <ul
-                    ref={trackRef}
-                    id="ai-tool-results"
-                    className="ai-tool-list__grid ai-tool-list__track"
-                  >
-                    {filteredAiTools.map((tool, index) => (
+                <div ref={trackRef} className="ai-tool-list__track">
+                  <ul className="ai-tool-list__grid">
+                    {aiTools.map((tool, index) => (
                       <li
                         key={tool.id}
                         className="ai-tool-list__item"
-                        data-aos={
-                          enablePinnedScroll || hasExplorerInteracted
-                            ? undefined
-                            : 'fade-up'
-                        }
+                        data-aos={enablePinnedScroll ? undefined : 'fade-up'}
                         data-aos-delay={
-                          enablePinnedScroll || hasExplorerInteracted
+                          enablePinnedScroll
                             ? undefined
                             : Math.min(index * 70, 280)
                         }
@@ -505,15 +391,7 @@ export function AiToolList({
                       </li>
                     ))}
                   </ul>
-                ) : (
-                  <EmptyState
-                    id="ai-tool-results"
-                    title="조건에 맞는 AI 도구를 찾지 못했습니다."
-                    description="검색어나 카테고리를 변경해 다시 확인해보세요."
-                    actionLabel="필터 초기화"
-                    onAction={resetFilters}
-                  />
-                )}
+                </div>
               </div>
             </div>
           </div>

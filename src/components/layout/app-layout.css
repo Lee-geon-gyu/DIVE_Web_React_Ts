@@ -26,6 +26,12 @@
   pointer-events: none;
 }
 
+.app-layout--loading .site-footer {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .app-layout__main {
   flex: 1 0 auto;
 }

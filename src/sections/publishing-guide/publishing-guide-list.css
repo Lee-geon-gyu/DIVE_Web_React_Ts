@@ -1,7 +1,6 @@
 .publishing-guide-list {
   width: 100%;
   padding-block: var(--section-padding-block);
-  background-color: var(--color-background-subtle);
 }
 
 .publishing-guide-list__grid {
@@ -42,20 +41,6 @@
 .publishing-guide-list--home-light .publishing-guide-card:focus-visible {
   border-color: var(--color-primary);
   box-shadow: 0 14px 32px rgb(15 23 42 / 9%);
-}
-
-.publishing-guide-list--home-light :is(
-    .explorer-controls__input,
-    .explorer-controls__select,
-    .explorer-controls__filter-button,
-    .empty-state
-  ) {
-  border-color: rgb(17 24 39 / 12%);
-  background-color: #ffffff;
-}
-
-.publishing-guide-list--home-light .explorer-controls__input::placeholder {
-  color: #8b95a5;
 }
 
 @media (max-width: 767px) {

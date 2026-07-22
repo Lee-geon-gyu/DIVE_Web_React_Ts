@@ -15,7 +15,7 @@
   inset: 0;
   visibility: visible;
   opacity: 1;
-  background: linear-gradient(#000, 80%, var(--color-primary-soft));
+  background: linear-gradient(#000, 30%, var(--color-primary-soft));
 }
 
 .app-layout--loading .page-hero__background {

@@ -1,10 +1,11 @@
 import { PageHero } from '../components/common/PageHero'
 import { SubPageLayout } from '../components/layout/SubPageLayout'
+import publishingGuideBackground from '../assets/images/sub/immersive/Immersive_bg_sixth.png'
 import { PublishingGuideList } from '../sections/publishing-guide/PublishingGuideList'
 
 export function PublishingGuidePage() {
   return (
-    <SubPageLayout>
+    <SubPageLayout backgroundImage={publishingGuideBackground}>
       <PageHero
         eyebrow="PUBLISHING GUIDE"
         title="구조부터 검수까지, 안정적인 웹 퍼블리싱 흐름을 정리하세요."

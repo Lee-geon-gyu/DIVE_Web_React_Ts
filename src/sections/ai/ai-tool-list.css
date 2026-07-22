@@ -3,7 +3,6 @@
   z-index: 2;
   isolation: isolate;
   width: 100%;
-  background: var(--color-background);
 }
 
 .ai-tool-list__pin {
@@ -17,14 +16,12 @@
 .ai-tool-list__container {
   width: 100%;
   padding-block: var(--section-padding-block);
-  background: var(--color-background);
 }
 
 .ai-tool-list__stage {
   width: 100%;
   visibility: visible;
   opacity: 1;
-  background: var(--color-background);
   transform: none;
 }
 
@@ -115,20 +112,6 @@
 .ai-tool-list--home-light .ai-tool-detail-card:focus-visible {
   border-color: var(--color-primary);
   box-shadow: 0 16px 36px rgb(15 23 42 / 10%);
-}
-
-.ai-tool-list--home-light :is(
-    .explorer-controls__input,
-    .explorer-controls__select,
-    .explorer-controls__filter-button,
-    .empty-state
-  ) {
-  border-color: rgb(17 24 39 / 12%);
-  background-color: #ffffff;
-}
-
-.ai-tool-list--home-light .explorer-controls__input::placeholder {
-  color: #8b95a5;
 }
 
 @media (max-width: 1279px) {

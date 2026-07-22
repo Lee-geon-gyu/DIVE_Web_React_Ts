@@ -1,10 +1,11 @@
 import { PageHero } from '../components/common/PageHero'
 import { SubPageLayout } from '../components/layout/SubPageLayout'
+import aiToolsBackground from '../assets/images/sub/immersive/Immersive_bg_fifth.png'
 import { AiToolList } from '../sections/ai/AiToolList'
 
 export function AiToolsPage() {
   return (
-    <SubPageLayout>
+    <SubPageLayout backgroundImage={aiToolsBackground}>
       <PageHero
         eyebrow="AI TOOLS"
         title="실무의 흐름을 더 효율적으로 만드는 AI 도구"

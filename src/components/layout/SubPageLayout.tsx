@@ -1,4 +1,9 @@
-import { useLayoutEffect, useRef, type PropsWithChildren } from 'react'
+import {
+  Children,
+  useLayoutEffect,
+  useRef,
+  type PropsWithChildren,
+} from 'react'
 import immersiveBackground from '../../assets/images/sub/immersive/Immersive_bg.png'
 import { gsap } from '../../lib/animation/gsap'
 import './sub-page-layout.css'
@@ -11,6 +16,7 @@ export function SubPageLayout({
   children,
   backgroundImage = immersiveBackground,
 }: SubPageLayoutProps) {
+  const [hero, ...body] = Children.toArray(children)
   const rootRef = useRef<HTMLDivElement>(null)
   const backgroundRef = useRef<HTMLDivElement>(null)
 
@@ -85,7 +91,10 @@ export function SubPageLayout({
         />
       </div>
       <div className="sub-page-layout__readability" aria-hidden="true" />
-      <div className="sub-page-layout__content">{children}</div>
+      <div className="sub-page-layout__content">
+        {hero}
+        <div className="sub-page-layout__body">{body}</div>
+      </div>
     </div>
   )
 }
