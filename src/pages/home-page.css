@@ -102,16 +102,15 @@
   border-radius: clamp(2.4rem, 2.5vw, 3rem);
   background: linear-gradient(
     180deg,
-    rgb(22 50 94 / 27%) 0%,
-    rgb(11 30 62 / 20%) 50%,
-    rgb(17 40 79 / 25%) 100%
+    rgb(15 34 66 / 100%) 0%,
+    rgb(8 23 49 / 80%) 50%,
+    rgb(13 31 61 / 60%) 100%
   );
   box-shadow:
-    0 28px 90px rgb(0 10 34 / 28%),
+    0 28px 90px rgb(0 10 34 / 36%),
     0 0 52px rgb(47 126 255 / 8%),
     inset 0 1px 0 rgb(255 255 255 / 7%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(20px) saturate(110%);
 }
 
 .home-space-glass-zone::before {
@@ -120,36 +119,22 @@
   inset: 0;
   border-radius: inherit;
   background:
-    radial-gradient(
-      circle at 15% 0%,
-      rgb(92 166 255 / 13%),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 90% 72%,
-      rgb(49 111 255 / 8%),
-      transparent 40%
-    );
+    radial-gradient(circle at 15% 70%, #001939, #0000 70%),
+    radial-gradient(circle at 90% 100%, #0000000d, #0000 100%);
   content: "";
   pointer-events: none;
 }
 
-.home-space-glass-zone > :is(
-    .home-categories,
-    .home-featured-guides,
-    .home-resources
-  ) {
+.home-space-glass-zone
+  > :is(.home-categories, .home-featured-guides, .home-resources) {
   position: relative;
   z-index: 1;
   padding-block: clamp(5.5rem, 7vw, 8rem);
   background: transparent;
 }
 
-.home-space-glass-zone > :is(
-    .home-categories,
-    .home-featured-guides,
-    .home-resources
-  )::before {
+.home-space-glass-zone
+  > :is(.home-categories, .home-featured-guides, .home-resources)::before {
   position: absolute;
   top: 0;
   left: var(--page-padding);
@@ -170,11 +155,8 @@
   margin-top: clamp(2.5rem, 4vw, 4.5rem);
 }
 
-.home-visual-group__content :is(
-    .home-categories,
-    .home-featured-guides,
-    .home-resources
-  ) {
+.home-visual-group__content
+  :is(.home-categories, .home-featured-guides, .home-resources) {
   background: transparent;
 }
 
@@ -190,19 +172,22 @@
     padding-top: 2.75rem;
     padding-bottom: 3.4375rem;
     border-radius: 1.5rem;
+    background: linear-gradient(
+      180deg,
+      rgb(15 34 66 / 72%) 0%,
+      rgb(8 23 49 / 68%) 50%,
+      rgb(13 31 61 / 71%) 100%
+    );
     box-shadow:
       0 18px 52px rgb(0 10 34 / 22%),
       0 0 28px rgb(47 126 255 / 5%),
       inset 0 1px 0 rgb(255 255 255 / 6%);
-    backdrop-filter: blur(11px);
-    -webkit-backdrop-filter: blur(11px);
+    backdrop-filter: blur(14px) saturate(108%);
+    -webkit-backdrop-filter: blur(14px) saturate(108%);
   }
 
-  .home-space-glass-zone > :is(
-      .home-categories,
-      .home-featured-guides,
-      .home-resources
-  ) {
+  .home-space-glass-zone
+    > :is(.home-categories, .home-featured-guides, .home-resources) {
     padding-block: 4rem;
   }
 
@@ -210,11 +195,8 @@
     margin-top: 2rem;
   }
 
-  .home-space-glass-zone > :is(
-      .home-categories,
-      .home-featured-guides,
-      .home-resources
-    )::before {
+  .home-space-glass-zone
+    > :is(.home-categories, .home-featured-guides, .home-resources)::before {
     width: 65%;
   }
 
@@ -229,15 +211,18 @@
     padding-top: clamp(3rem, 4vw, 4rem);
     padding-bottom: clamp(3.75rem, 5vw, 5rem);
     border-radius: 2.2rem;
-    backdrop-filter: blur(13px);
-    -webkit-backdrop-filter: blur(13px);
+    background: linear-gradient(
+      180deg,
+      rgb(15 34 66 / 68%) 0%,
+      rgb(8 23 49 / 64%) 50%,
+      rgb(13 31 61 / 67%) 100%
+    );
+    backdrop-filter: blur(18px) saturate(110%);
+    -webkit-backdrop-filter: blur(18px) saturate(110%);
   }
 
-  .home-space-glass-zone > :is(
-      .home-categories,
-      .home-featured-guides,
-      .home-resources
-    ) {
+  .home-space-glass-zone
+    > :is(.home-categories, .home-featured-guides, .home-resources) {
     padding-block: clamp(5rem, 6vw, 7rem);
   }
 
@@ -245,16 +230,15 @@
     margin-top: clamp(2.5rem, 3vw, 3.5rem);
   }
 
-  .home-space-glass-zone > :is(
-      .home-categories,
-      .home-featured-guides,
-      .home-resources
-    )::before {
+  .home-space-glass-zone
+    > :is(.home-categories, .home-featured-guides, .home-resources)::before {
     width: 55%;
   }
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
   .home-space-glass-zone {
     background: linear-gradient(
       180deg,

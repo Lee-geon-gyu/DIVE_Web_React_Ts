@@ -57,6 +57,28 @@
   letter-spacing: 0.01em;
 }
 
+.app-loader__skip-hint {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  color: rgb(255 255 255 / 72%);
+  font-size: clamp(0.875rem, 1.1vw, 1rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  pointer-events: none;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+  text-decoration-thickness: 1px;
+}
+
+.app-loader__skip-hint kbd {
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+}
+
 .app-loader__word {
   display: inline-flex;
   align-items: flex-end;
@@ -183,6 +205,10 @@
     gap: 0.3rem;
     font-size: clamp(0.68rem, 3.4vw, 1rem);
     letter-spacing: 0;
+  }
+
+  .app-loader__skip-hint {
+    font-size: 1.2rem;
   }
 
   .app-loader__logo-layout {

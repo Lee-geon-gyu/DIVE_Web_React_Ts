@@ -57,7 +57,9 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
     ).matches;
     let isPageRestored = false;
     let isCancelled = false;
+    let isLoadingComplete = false;
     let context: gsap.Context | undefined;
+    let timeline: gsap.core.Timeline | undefined;
     let removeResizeListener: () => void = () => undefined;
 
     const resetInitialScrollPosition = () => {
@@ -69,6 +71,12 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
 
     const preventInitialScroll = (event: Event) => event.preventDefault();
     const preventBackgroundInteraction = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && !event.repeat) {
+        event.preventDefault();
+        skipLoading();
+        return;
+      }
+
       if (event.key === "Tab") {
         event.preventDefault();
         return;
@@ -137,11 +145,34 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
     };
 
     const completeLoading = () => {
+      if (isLoadingComplete) return;
+      isLoadingComplete = true;
       resetInitialScrollPosition();
       restorePage();
       resetInitialScrollPosition();
       onComplete();
     };
+
+    function skipLoading() {
+      if (isLoadingComplete) return;
+
+      isCancelled = true;
+      timeline?.kill();
+      removeResizeListener();
+      context?.revert();
+
+      window.dispatchEvent(new Event("dive:loader-header-reveal"));
+      gsap.set(
+        [
+          document.querySelector(".site-header"),
+          document.querySelector(".site-header__logo-image"),
+          document.querySelector(".scroll-progress"),
+        ].filter(Boolean),
+        { clearProps: "all" },
+      );
+
+      completeLoading();
+    }
 
     const initializeLoader = async () => {
       const assetImages = Array.from(
@@ -283,7 +314,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
       if (scrollProgress) gsap.set(scrollProgress, { autoAlpha: 0 });
 
       // Loader GSAP Timeline - 모든 STEP은 아래 하나의 Timeline에서 순차 실행됩니다.
-      const timeline = gsap.timeline({
+      timeline = gsap.timeline({
         defaults: { ease: "power2.inOut" },
         onComplete: completeLoading,
       });
@@ -424,7 +455,7 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
         // STEP 11 - Reveal Site / Loader Fade Out
         .to(loader, { opacity: 0, duration: 0.2, ease: "power2.out" });
 
-      const handleResize = () => timeline.invalidate();
+      const handleResize = () => timeline?.invalidate();
       window.addEventListener("resize", handleResize, { passive: true });
       removeResizeListener = () =>
         window.removeEventListener("resize", handleResize);
@@ -481,6 +512,9 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
               ))}
             </span>
           ))}
+        </p>
+        <p className="app-loader__skip-hint">
+          <kbd>Enter</kbd> to Skip
         </p>
         <div className="app-loader__logo-assembly">
           {LOADER_INITIALS.map(({ letter, src, width, height }) => (

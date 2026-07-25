@@ -1,8 +1,7 @@
-import type Lenis from 'lenis'
 import { useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLenisRef } from '../../app/providers/lenis-context'
-import { gsap } from '../../lib/animation/gsap'
+import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
 import './scroll-progress.css'
 
 export function ScrollProgress() {
@@ -17,11 +16,38 @@ export function ScrollProgress() {
 
     const setScale = gsap.quickSetter(bar, 'scaleX')
     let connectionFrame = 0
+    let syncFrame = 0
     let removeScrollListener: () => void = () => undefined
 
-    const updateProgress = ({ scroll, limit }: Lenis) => {
-      const progress = limit > 0 ? scroll / limit : 0
+    const updateProgressBar = () => {
+      const documentHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+      )
+      const scrollLimit = Math.max(0, documentHeight - window.innerHeight)
+      const progress = scrollLimit > 0 ? window.scrollY / scrollLimit : 0
+
       setScale(gsap.utils.clamp(0, 1, progress))
+    }
+
+    const syncProgressBar = () => {
+      updateProgressBar()
+      window.cancelAnimationFrame(syncFrame)
+      syncFrame = window.requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true)
+        ScrollTrigger.update()
+        updateProgressBar()
+      })
+    }
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      updateProgressBar()
+
+      if (event.persisted) {
+        lenisRef.current?.resize()
+      }
+
+      syncProgressBar()
     }
 
     const connectToLenis = () => {
@@ -32,14 +58,24 @@ export function ScrollProgress() {
         return
       }
 
-      removeScrollListener = lenis.on('scroll', updateProgress)
-      updateProgress(lenis)
+      removeScrollListener = lenis.on('scroll', updateProgressBar)
+      updateProgressBar()
     }
 
+    updateProgressBar()
     connectToLenis()
+    window.addEventListener('load', syncProgressBar)
+    window.addEventListener('pageshow', handlePageShow)
+
+    if (document.readyState === 'complete') {
+      syncProgressBar()
+    }
 
     return () => {
       window.cancelAnimationFrame(connectionFrame)
+      window.cancelAnimationFrame(syncFrame)
+      window.removeEventListener('load', syncProgressBar)
+      window.removeEventListener('pageshow', handlePageShow)
       removeScrollListener()
       gsap.killTweensOf(bar)
     }

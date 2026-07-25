@@ -43,6 +43,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
     if (!root) return;
 
     let stopWatchingLoader: () => void = () => undefined;
+    let backgroundRangeTrigger: ScrollTrigger | undefined;
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       const sharedScope = root.querySelector<HTMLElement>(".home-visual-group");
@@ -80,8 +81,11 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
         };
 
         ScrollTrigger.getById("home-fixed-background-range")?.kill();
-        gsap.set(sharedBackground, { autoAlpha: 0 });
-        ScrollTrigger.create({
+        gsap.set(sharedBackground, {
+          autoAlpha: 0,
+          filter: "brightness(1)",
+        });
+        backgroundRangeTrigger = ScrollTrigger.create({
           id: "home-fixed-background-range",
           trigger: backgroundStartSection,
           start: "top 50%",
@@ -449,7 +453,7 @@ export function useHomeGsap(rootRef: RefObject<HTMLDivElement | null>) {
 
     return () => {
       stopWatchingLoader();
-      ScrollTrigger.getById("home-fixed-background-range")?.kill();
+      backgroundRangeTrigger?.kill();
       gsap.killTweensOf(
         root.querySelector<HTMLElement>(".home-visual-group__background"),
       );
