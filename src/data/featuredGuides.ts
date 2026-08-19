@@ -18,6 +18,15 @@ export const featuredGuides: FeaturedGuide[] = [
     to: '/reference',
   },
   {
+    id: 'ai-tool-selection',
+    title: '작업 목적에 맞는 AI 도구 선택하기',
+    description:
+      '기능 목록보다 실제 작업 과정과 검토 기준을 중심으로 AI 도구를 선택하는 방법을 알아봅니다.',
+    category: 'AI 도구',
+    readingTime: '약 7분',
+    to: '/ai',
+  },
+  {
     id: 'resource-license-basics',
     title: '디자인 리소스 라이선스 확인하기',
     description:
@@ -43,5 +52,14 @@ export const featuredGuides: FeaturedGuide[] = [
     category: '웹 라이브러리',
     readingTime: '약 6분',
     to: '/libraries',
+  },
+  {
+    id: 'semantic-html-guide',
+    title: 'Semantic HTML 작성 가이드',
+    description:
+      '콘텐츠의 의미에 맞는 요소를 선택해 접근성과 유지보수성을 높이는 작성 기준을 알아봅니다.',
+    category: '퍼블리싱',
+    readingTime: '약 7분',
+    to: '/publishing-guide',
   },
 ]

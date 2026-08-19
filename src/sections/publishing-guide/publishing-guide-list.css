@@ -37,6 +37,10 @@
   box-shadow: 0 10px 28px rgb(15 23 42 / 5%);
 }
 
+.publishing-guide-list--home-light .publishing-guide-card__category {
+  background-color: var(--color-primary-soft);
+}
+
 .publishing-guide-list--home-light .publishing-guide-card:hover,
 .publishing-guide-list--home-light .publishing-guide-card:focus-visible {
   border-color: var(--color-primary);

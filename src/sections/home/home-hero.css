@@ -61,30 +61,34 @@
   align-items: center;
   justify-content: center;
   margin-top: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  border: 1px solid rgb(255 255 255 / 28%);
-  border-radius: 12px;
+  padding: var(--space-3) var(--space-10);
+  border-radius: 48px;
   color: var(--color-white);
-  background-color: rgb(37 99 235 / 88%);
-  font-size: var(--font-size-md);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-primary-hover) 55%,
+    var(--color-primary-active) 100%
+  );
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   transition:
     transform var(--duration-fast) var(--ease-standard),
     border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-normal) var(--ease-standard);
+    filter var(--duration-normal) var(--ease-standard);
 }
 
 .home-hero__cta:hover,
 .home-hero__cta:focus-visible {
   border-color: rgb(255 255 255 / 52%);
-  color: var(--color-primary-active);
+  color: var(--color-white);
   font-weight: var(--font-weight-bold);
-  background-color: #fff;
+  filter: brightness(1.08);
   transform: translateY(-2px);
 }
 
 .home-hero__cta:active {
-  background-color: var(--color-primary-active);
+  filter: brightness(0.92);
   transform: translateY(0);
 }
 

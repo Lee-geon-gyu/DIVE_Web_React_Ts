@@ -7,6 +7,7 @@ import {
   useNavigationType,
 } from 'react-router-dom'
 import { useLenisRef } from '../../app/providers/lenis-context'
+import { preloadSubPageBackground } from '../../lib/preloadSubPageBackground'
 import './page-transition.css'
 
 const TRANSITION_DURATION = 0.3
@@ -36,6 +37,7 @@ function prefersReducedMotion() {
 export function PageTransition() {
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<gsap.core.Tween | null>(null)
+  const navigationRequestRef = useRef(0)
   const location = useLocation()
   const previousLocationKeyRef = useRef(location.key)
   const navigate = useNavigate()
@@ -52,7 +54,13 @@ export function PageTransition() {
   }, [lenisRef])
 
   const startRouteTransition = useCallback(
-    (to: string) => {
+    async (to: string) => {
+      const requestId = ++navigationRequestRef.current
+
+      await preloadSubPageBackground(to)
+
+      if (requestId !== navigationRequestRef.current) return
+
       const container = containerRef.current
 
       if (!container || prefersReducedMotion()) {
@@ -124,7 +132,7 @@ export function PageTransition() {
       }
 
       event.preventDefault()
-      startRouteTransition(targetPath)
+      void startRouteTransition(targetPath)
     }
 
     document.addEventListener('click', handleInternalLinkClick, true)
@@ -187,6 +195,7 @@ export function PageTransition() {
     const container = containerRef.current
 
     return () => {
+      navigationRequestRef.current += 1
       animationRef.current?.kill()
 
       if (container) {

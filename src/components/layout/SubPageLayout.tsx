@@ -85,8 +85,11 @@ export function SubPageLayout({
           className="sub-page-layout__background-image"
           src={backgroundImage}
           alt=""
-          width="1920"
-          height="1080"
+          width="2880"
+          height="1425"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
           draggable={false}
         />
       </div>

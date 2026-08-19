@@ -108,6 +108,10 @@
   box-shadow: 0 12px 32px rgb(15 23 42 / 6%);
 }
 
+.ai-tool-list--home-light .ai-tool-detail-card__category {
+  background-color: var(--color-primary-soft);
+}
+
 .ai-tool-list--home-light .ai-tool-detail-card:hover,
 .ai-tool-list--home-light .ai-tool-detail-card:focus-visible {
   border-color: var(--color-primary);

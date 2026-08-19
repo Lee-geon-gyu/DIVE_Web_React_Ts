@@ -15,12 +15,38 @@
   inset: 0;
   visibility: visible;
   opacity: 1;
-  background: linear-gradient(#000, 30%, var(--color-primary-soft));
 }
 
 .app-layout--loading .page-hero__background {
   visibility: hidden;
   opacity: 0;
+}
+
+.page-hero__gradient {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(#000, 30%, var(--color-primary-soft));
+  opacity: 0;
+  transform: translateY(-3%);
+  will-change: opacity, transform;
+}
+
+.app-layout:not(.app-layout--loading) .page-hero__gradient {
+  animation: page-hero-gradient-slide 1.5s cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+}
+
+@keyframes page-hero-gradient-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-3%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .page-hero__background::before,
@@ -31,6 +57,7 @@
 }
 
 .page-hero__background::before {
+  z-index: 1;
   top: 8%;
   right: max(-8rem, -8vw);
   width: clamp(13rem, 24vw, 25rem);
@@ -42,6 +69,7 @@
 }
 
 .page-hero__background::after {
+  z-index: 1;
   right: var(--page-padding);
   bottom: 0;
   left: var(--page-padding);
@@ -115,5 +143,11 @@
   .page-hero {
     --page-hero-decor-y: 0%;
     --page-hero-line-scale: 1;
+  }
+
+  .page-hero__gradient {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }

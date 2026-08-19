@@ -175,9 +175,15 @@ export function AppLoader({ onComplete }: AppLoaderProps) {
     }
 
     const initializeLoader = async () => {
-      const assetImages = Array.from(
+      const loaderAssetImages = Array.from(
         loader.querySelectorAll<HTMLImageElement>(".app-loader__asset-image"),
       );
+      const pageBackgroundImage = document.querySelector<HTMLImageElement>(
+        ".sub-page-layout__background-image",
+      );
+      const assetImages = pageBackgroundImage
+        ? [...loaderAssetImages, pageBackgroundImage]
+        : loaderAssetImages;
 
       await Promise.all(
         assetImages.map(async (image) => {
