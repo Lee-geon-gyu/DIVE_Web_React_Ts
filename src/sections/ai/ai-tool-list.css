@@ -109,6 +109,7 @@
 }
 
 .ai-tool-list--home-light .ai-tool-detail-card__category {
+  color: var(--color-primary);
   background-color: var(--color-primary-soft);
 }
 

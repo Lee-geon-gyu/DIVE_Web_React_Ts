@@ -1,5 +1,4 @@
 import { useId } from 'react'
-import { Link } from 'react-router-dom'
 import { ResourceCard } from '../../components/common/ResourceCard'
 import { homeResources } from '../../data/homeResources'
 import './home-resources.css'
@@ -21,9 +20,6 @@ export function HomeResources() {
                 필요한 자료를 목적별로 살펴보세요.
               </p>
             </div>
-            <Link className="home-resources__all-link" to="/resources">
-              전체 리소스 보기
-            </Link>
           </div>
 
           <ul className="home-resources__list">

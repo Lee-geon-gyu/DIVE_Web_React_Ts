@@ -38,6 +38,7 @@
 }
 
 .publishing-guide-list--home-light .publishing-guide-card__category {
+  color: var(--color-primary);
   background-color: var(--color-primary-soft);
 }
 
