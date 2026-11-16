@@ -1,0 +1,77 @@
+.category-backdrop {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  overflow: clip;
+  pointer-events: none;
+  perspective: 1200px;
+  background: #03090d;
+}
+
+.category-backdrop__pointer,
+.category-backdrop__ambient {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.category-backdrop__ambient {
+  inset: -3%;
+  background:
+    radial-gradient(ellipse 46% 56% at 50% 54%, #11333b85, transparent),
+    #03090d;
+}
+
+.category-backdrop canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.category-backdrop__star {
+  position: absolute;
+  width: var(--twinkle-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #d2edff;
+  box-shadow: 0 0 4px #9cdbff84;
+  animation: category-star-twinkle 9s ease-in-out var(--twinkle-delay) infinite;
+}
+
+@keyframes category-star-twinkle {
+  0%, 22%, 53%, 100% { opacity: 0; }
+  35% { opacity: 0.92; }
+}
+
+.home-closing-guides {
+  position: relative;
+  grid-area: 1 / 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-closing-guides__ring {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  width: min(78vw, 39rem);
+  aspect-ratio: 1;
+  border: 1px solid #9cf6e13d;
+  border-radius: 50%;
+}
+
+.home-closing-guides__ring::before,
+.home-closing-guides__ring::after {
+  position: absolute;
+  inset: 16%;
+  border: inherit;
+  border-radius: inherit;
+  opacity: 0.8;
+  content: "";
+}
+
+.home-closing-guides__ring::after {
+  inset: 32%;
+  opacity: 0.65;
+}

@@ -44,14 +44,14 @@ export function ExplorerControls({
   onSelectedSortChange,
 }: ExplorerControlsProps) {
   return (
-    <div className="explorer-controls">
+    <div className="explorer-controls" data-aos="fade-up" data-aos-offset="0">
       <div className="explorer-controls__search">
         <label className="explorer-controls__label" htmlFor={searchInputId}>
           {searchLabel}
         </label>
         <input
           id={searchInputId}
-          className="explorer-controls__input"
+          className="d-input explorer-controls__input"
           type="search"
           value={searchQuery}
           placeholder={searchPlaceholder}
@@ -70,7 +70,7 @@ export function ExplorerControls({
             return (
               <li key={option.value}>
                 <button
-                  className="explorer-controls__filter-button"
+                  className="d-btn explorer-controls__filter-button"
                   type="button"
                   aria-pressed={isSelected}
                   aria-controls={resultsId}
@@ -94,7 +94,7 @@ export function ExplorerControls({
           </label>
           <select
             id={`${searchInputId}-sort`}
-            className="explorer-controls__select"
+            className="d-select explorer-controls__select"
             value={selectedSort}
             aria-controls={resultsId}
             onChange={(event) => onSelectedSortChange(event.target.value)}

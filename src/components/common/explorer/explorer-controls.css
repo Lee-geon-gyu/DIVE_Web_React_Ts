@@ -30,7 +30,6 @@
   display: flex;
   margin-top: var(--space-10);
   padding-top: var(--space-8);
-  border-top: 1px solid var(--color-border);
   flex-direction: column;
   gap: var(--space-8);
 }
@@ -163,23 +162,5 @@
   .explorer-controls {
     display: flex;
     gap: var(--space-6);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-aos="explorer-panel"],
-  [data-aos="explorer-panel"].aos-animate {
-    opacity: 1;
-    transform: none;
-  }
-
-  .explorer-controls__input,
-  .explorer-controls__select,
-  .explorer-controls__filter-button {
-    transition: none;
-  }
-
-  .explorer-controls__filter-button:active {
-    transform: none;
   }
 }

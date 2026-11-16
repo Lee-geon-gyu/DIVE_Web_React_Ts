@@ -19,7 +19,7 @@ export function EmptyState({
     <div id={id} className="empty-state">
       <h3 className="empty-state__title">{title}</h3>
       <p className="empty-state__description">{description}</p>
-      <button className="empty-state__action" type="button" onClick={onAction}>
+      <button className="dive-outline-pill empty-state__action" type="button" onClick={onAction}>
         {actionLabel}
       </button>
     </div>

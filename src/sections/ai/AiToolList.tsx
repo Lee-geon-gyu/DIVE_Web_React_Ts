@@ -1,13 +1,20 @@
-import { useId, useLayoutEffect, useRef } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { useLenisRef } from '../../app/providers/lenis-context'
 import { AiToolDetailCard } from '../../components/ai/AiToolDetailCard'
+import { EmptyState } from '../../components/common/EmptyState'
 import { SectionHeader } from '../../components/common/SectionHeader'
+import { ExplorerControls } from '../../components/common/explorer/ExplorerControls'
 import { aiTools } from '../../data/aiTools'
 import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
 import './ai-tool-list.css'
 
 const DOWN_SCROLL_KEYS = new Set(['ArrowDown', 'PageDown', 'End'])
 const UP_SCROLL_KEYS = new Set(['ArrowUp', 'PageUp', 'Home'])
+const ALL_CATEGORIES = '전체'
+const toolCategories = [
+  ALL_CATEGORIES,
+  ...new Set(aiTools.map((tool) => tool.category)),
+].map((category) => ({ value: category, label: category }))
 
 type AiRevealState = 'hidden' | 'fading-in' | 'visible' | 'fading-out'
 type AiGateMode = 'none' | 'waiting-for-enter' | 'waiting-for-exit'
@@ -23,6 +30,10 @@ export function AiToolList({
 }: AiToolListProps) {
   const lenisRef = useLenisRef()
   const titleId = useId()
+  const resultsId = `${titleId}-results`
+  const [hasExplorerInteracted, setHasExplorerInteracted] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES)
   const sectionRef = useRef<HTMLElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -49,9 +60,6 @@ export function AiToolList({
       let revealTween: gsap.core.Tween | undefined
       let revealLocked = false
       let touchStartY: number | undefined
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
 
       const isInteractiveTarget = (target: EventTarget | null) => {
         if (!(target instanceof HTMLElement)) return false
@@ -159,7 +167,7 @@ export function AiToolList({
 
         revealTween = gsap.to(stage, {
           autoAlpha: targetState === 'visible' ? 1 : 0,
-          duration: prefersReducedMotion ? 0.05 : 0.5,
+          duration: 0.5,
           ease: 'power1.out',
           overwrite: true,
           onComplete: () => {
@@ -249,14 +257,13 @@ export function AiToolList({
       window.addEventListener('dive:transition-reveal-complete', armAiReveal)
 
       if (
-        !prefersReducedMotion &&
         (ScrollTrigger.getById('transition-reveal-pin')?.progress ?? 0) >= 1
       ) {
         armAiReveal()
       }
 
       media.add(
-        '(min-width: 1280px) and (prefers-reduced-motion: no-preference)',
+        '(min-width: 1280px)',
         () => {
           ScrollTrigger.getById('ai-tools-pin')?.kill()
           gsap.set(track, { y: 0 })
@@ -344,6 +351,25 @@ export function AiToolList({
     }
   }, [enablePinnedScroll, lenisRef])
 
+  const query = searchQuery.trim().toLocaleLowerCase()
+  const visibleTools = enablePinnedScroll
+    ? aiTools
+    : aiTools.filter((tool) => {
+        if (selectedCategory !== ALL_CATEGORIES && tool.category !== selectedCategory) return false
+        if (!query) return true
+
+        return [
+          tool.name, tool.category, tool.purpose, tool.summary,
+          ...tool.useCases, tool.recommendedFor, tool.accessType,
+        ].join(' ').toLocaleLowerCase().includes(query)
+      })
+  const animateCards = !enablePinnedScroll && !hasExplorerInteracted
+
+  function resetFilters() {
+    setSearchQuery('')
+    setSelectedCategory(ALL_CATEGORIES)
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -362,12 +388,33 @@ export function AiToolList({
               >
                 <SectionHeader
                   titleId={titleId}
-                  eyebrow="Explore tools"
-                  title="AI Tools"
+                  eyebrow="작업별 도구"
+                  title="실무 AI 도구"
                   description="작업 단계와 필요한 도움을 기준으로 각 도구의 활용 방법을 살펴보세요."
-                  status={`총 ${aiTools.length}개의 AI 도구`}
+                  status={visibleTools.length > 0 ? `총 ${visibleTools.length}개의 AI 도구` : '검색 결과가 없습니다'}
+                  announceStatus={!enablePinnedScroll}
                   enableAos={!enablePinnedScroll}
                 />
+                {!enablePinnedScroll && (
+                  <ExplorerControls
+                    searchInputId={`${titleId}-search`}
+                    resultsId={resultsId}
+                    searchLabel="AI 도구 검색"
+                    searchPlaceholder="도구 이름, 작업 목적, 활용 예시 검색"
+                    searchQuery={searchQuery}
+                    onSearchQueryChange={(value) => {
+                      setHasExplorerInteracted(true)
+                      setSearchQuery(value)
+                    }}
+                    filterLabel="카테고리"
+                    filterOptions={toolCategories}
+                    selectedFilter={selectedCategory}
+                    onSelectedFilterChange={(value) => {
+                      setHasExplorerInteracted(true)
+                      setSelectedCategory(value)
+                    }}
+                  />
+                )}
               </div>
 
               <div
@@ -375,22 +422,28 @@ export function AiToolList({
                 className="explorer-layout__results ai-tool-list__viewport"
               >
                 <div ref={trackRef} className="ai-tool-list__track">
-                  <ul className="ai-tool-list__grid">
-                    {aiTools.map((tool, index) => (
-                      <li
-                        key={tool.id}
-                        className="ai-tool-list__item"
-                        data-aos={enablePinnedScroll ? undefined : 'fade-up'}
-                        data-aos-delay={
-                          enablePinnedScroll
-                            ? undefined
-                            : Math.min(index * 70, 280)
-                        }
-                      >
-                        <AiToolDetailCard tool={tool} />
-                      </li>
-                    ))}
-                  </ul>
+                  {visibleTools.length > 0 ? (
+                    <ul id={resultsId} className="ai-tool-list__grid">
+                      {visibleTools.map((tool, index) => (
+                        <li
+                          key={tool.id}
+                          className="ai-tool-list__item"
+                          data-aos={animateCards ? 'fade-up' : undefined}
+                          data-aos-delay={animateCards ? Math.min(index * 70, 280) : undefined}
+                        >
+                          <AiToolDetailCard tool={tool} />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <EmptyState
+                      id={resultsId}
+                      title="조건에 맞는 AI 도구를 찾지 못했습니다."
+                      description="검색어나 카테고리를 변경해 다시 확인해보세요."
+                      actionLabel="필터 초기화"
+                      onAction={resetFilters}
+                    />
+                  )}
                 </div>
               </div>
             </div>

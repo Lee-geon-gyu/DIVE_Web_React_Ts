@@ -81,7 +81,7 @@ export function ResponsiveGuideList() {
           <SectionHeader
             titleId={titleId}
             title="반응형 설계 가이드"
-            description="레이아웃, 타이포그래피, 내비게이션, 이미지 처리 등 주요 주제를 확인하고, 화면 크기 변화에 따라 무엇을 유지하고 조정해야 하는지 살펴보세요."
+            description="레이아웃, 타이포그래피, 내비게이션, 이미지 처리 등 주요 주제를 확인하고 화면 크기 변화에 따라 무엇을 유지하고 조정해야 하는지 살펴보세요."
             status={
               filteredResponsiveGuides.length > 0
                 ? `총 ${filteredResponsiveGuides.length}개의 가이드`

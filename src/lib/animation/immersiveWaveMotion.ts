@@ -6,11 +6,13 @@ const ambientEpoch = performance.now()
 interface ImmersiveWaveMotionOptions {
   ambient: HTMLElement
   pointer: HTMLElement
+  mobileAmbient?: boolean
 }
 
 export function createImmersiveWaveMotion({
   ambient,
   pointer,
+  mobileAmbient = false,
 }: ImmersiveWaveMotionOptions) {
   const media = gsap.matchMedia()
 
@@ -65,16 +67,17 @@ export function createImmersiveWaveMotion({
   }
 
   media.add(
-    '(prefers-reduced-motion: no-preference) and (min-width: 1280px)',
+    '(min-width: 1280px)',
     () => createAmbientTimeline(1),
   )
   media.add(
-    '(prefers-reduced-motion: no-preference) and (min-width: 768px) and (max-width: 1279px)',
+    '(min-width: 768px) and (max-width: 1279px)',
     () => createAmbientTimeline(0.5),
   )
+  if (mobileAmbient) media.add('(max-width: 767px)', () => createAmbientTimeline(0.35))
 
   media.add(
-    '(prefers-reduced-motion: no-preference) and (min-width: 1280px) and (hover: hover) and (pointer: fine)',
+    '(min-width: 1280px) and (hover: hover) and (pointer: fine)',
     () => {
       const moveX = gsap.quickTo(pointer, 'x', {
         duration: 0.9,

@@ -473,7 +473,7 @@ UI/UX 디자인 초심자에게 필요한 레퍼런스 사이트를 소개한다
 - 빈 상태 애니메이션
 - 부드러운 스크롤
 
-애니메이션은 사용자의 `prefers-reduced-motion` 설정을 존중해야 한다.
+애니메이션은 사용자의 별도 요청이 없는 한 두 모션 설정에서 동일하게 재생한다.
 
 ## 10. 접근성
 
@@ -708,3 +708,5 @@ Breakpoint는 다음을 유지한다.
 한 단계씩 구현하고 완료 후 다음 단계로 넘어간다.
 
 한 번에 전체 프로젝트를 구현하지 않는다.
+
+DIVE 리디자인에는 daisyUI, Tailwind CSS, Three.js의 MIT 라이선스 버전을 사용한다. daisyUI 공식 데모의 구성은 레퍼런스로 참고하고 공개 컴포넌트를 DIVE의 색상과 콘텐츠에 맞춘다. [daisyUI 컴포넌트](https://daisyui.com/components/) · [Blink](https://blink.daisyui.com/) · [Scalo](https://daisyui.com/store/scalo/)

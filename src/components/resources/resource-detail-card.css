@@ -127,10 +127,3 @@
     flex-direction: column;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .resource-detail-card:hover,
-  .resource-detail-card:focus-visible {
-    transform: none;
-  }
-}

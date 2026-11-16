@@ -48,9 +48,73 @@
   font-size: var(--font-size-xs);
 }
 
-.library-card__name {
-  font-size: var(--font-size-xl);
+.library-card__visual {
+  --library-visual-start: #101c26;
+  --library-visual-end: #283747;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  min-height: clamp(6.25rem, 10vw, 9rem);
+  place-items: center;
+  overflow: hidden;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--library-visual-start), var(--library-visual-end));
+  color: #f2f7ff;
 }
+
+.library-card__visual[data-library='gsap-animation'] {
+  --library-visual-start: #101b10;
+  --library-visual-end: #354a19;
+}
+
+.library-card__visual[data-library='scrolltrigger-interaction'] {
+  --library-visual-start: #0c231d;
+  --library-visual-end: #215545;
+}
+
+.library-card__visual[data-library='lenis-smooth-scroll'] {
+  --library-visual-start: #24181d;
+  --library-visual-end: #663d45;
+}
+
+.library-card__visual[data-library='swiper-carousel'] {
+  --library-visual-start: #0d255d;
+  --library-visual-end: #224884;
+}
+
+.library-card__visual[data-library='aos-scroll-reveal'] {
+  --library-visual-start: #101b36;
+  --library-visual-end: #28566b;
+}
+
+.library-card__visual[data-library='splittype-text'] {
+  --library-visual-start: #271b31;
+  --library-visual-end: #523e64;
+}
+
+.library-card__visual[data-library='motion-interaction'] {
+  --library-visual-start: #26250f;
+  --library-visual-end: #605319;
+}
+
+.library-card__visual[data-library='radix-ui-primitives'] {
+  --library-visual-start: #1a1a21;
+  --library-visual-end: #414454;
+}
+
+.library-card__name {
+  color: inherit;
+  font-size: clamp(1.55rem, 2.65vw, 2.85rem);
+  font-weight: 780;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.library-card:is(:hover, :focus-visible) .library-card__visual .library-card__name { color: #fff; }
 
 .library-card__purpose {
   color: var(--color-text-primary);
@@ -82,7 +146,6 @@
 
 .library-card__list-section--considerations {
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-divider);
 }
 
 .library-card__use-cases {
@@ -126,15 +189,21 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.catalog-card__note {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.catalog-card__note strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
 @media (max-width: 767px) {
   .library-card {
     padding: var(--space-6);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .library-card:hover,
-  .library-card:focus-visible {
-    transform: none;
   }
 }

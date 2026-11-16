@@ -43,11 +43,13 @@ export function ReferenceList() {
       }
 
       const searchableContent = [
-        reference.title,
-        reference.description,
+        reference.name,
         reference.category,
-        reference.sourceType,
-        ...reference.tags,
+        reference.purpose,
+        reference.description,
+        reference.recommendedStage,
+        ...reference.useCases,
+        ...reference.aliases,
       ]
         .join(' ')
         .toLocaleLowerCase()
@@ -78,11 +80,11 @@ export function ReferenceList() {
         <div className="content-container">
           <SectionHeader
             titleId={titleId}
-            title="목적별 레퍼런스"
-            description="화면을 설계하고 구현할 때 검토할 수 있는 주제를 살펴보세요."
+            title="디자인 레퍼런스 사이트"
+            description="포트폴리오, 무드보드, 실제 앱 화면을 작업 목적에 맞춰 찾아보세요."
             status={
               filteredReferences.length > 0
-                ? `총 ${filteredReferences.length}개의 레퍼런스`
+                ? `총 ${filteredReferences.length}개 사이트`
                 : '검색 결과가 없습니다'
             }
             announceStatus
@@ -92,7 +94,7 @@ export function ReferenceList() {
             searchInputId="reference-search"
             resultsId="reference-results"
             searchLabel="레퍼런스 검색"
-            searchPlaceholder="제목, 태그, 카테고리 검색"
+            searchPlaceholder="사이트 이름, 활용 주제, 카테고리 검색"
             searchQuery={searchQuery}
             onSearchQueryChange={handleSearchQueryChange}
             filterLabel="카테고리 필터"

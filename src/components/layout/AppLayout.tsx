@@ -1,3 +1,4 @@
+import { ScrollRestoration } from 'react-router-dom'
 import { Header } from '../navigation/Header'
 import { ScrollProgress } from '../navigation/ScrollProgress'
 import { PageTransition } from '../transition/PageTransition'
@@ -6,12 +7,14 @@ import './app-layout.css'
 
 interface AppLayoutProps {
   isLoading: boolean
+  isOpening: boolean
 }
 
-export function AppLayout({ isLoading }: AppLayoutProps) {
+export function AppLayout({ isLoading, isOpening }: AppLayoutProps) {
+  const introClass = isLoading ? ' app-layout--loading' : isOpening ? ' app-layout--opening' : ''
   return (
     <div
-      className={`app-layout${isLoading ? ' app-layout--loading' : ''}`}
+      className={`app-layout${introClass}`}
       inert={isLoading}
       aria-hidden={isLoading || undefined}
     >
@@ -23,6 +26,7 @@ export function AppLayout({ isLoading }: AppLayoutProps) {
       </main>
 
       <Footer />
+      <ScrollRestoration />
     </div>
   )
 }

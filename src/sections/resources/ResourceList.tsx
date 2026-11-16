@@ -81,7 +81,7 @@ export function ResourceList() {
           <SectionHeader
             titleId={titleId}
             title="실무 리소스"
-            description="작업 단계와 활용 목적을 기준으로 리소스를 확인하고, 필요한 자료를 비교해 선택할 수 있도록 핵심 정보를 제공합니다."
+            description="작업 단계와 활용 목적을 기준으로 리소스를 확인하고 필요한 자료를 비교해 선택할 수 있도록 핵심 정보를 제공합니다."
             status={
               filteredResources.length > 0
                 ? `총 ${filteredResources.length}개의 리소스`

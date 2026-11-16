@@ -7,21 +7,61 @@
   width: 100%;
   visibility: visible;
   opacity: 1;
-  border-bottom: 1px solid transparent;
-  background-color: rgb(0 0 0 / 72%);
+  border-bottom: 1px solid var(--dive-rule);
+  background-color: var(--dive-header-bg);
   backdrop-filter: blur(16px);
   transform: none;
   transition:
     border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .site-header.is-scrolled,
 .site-header.is-menu-open {
-  border-color: rgb(255 255 255 / 12%);
-  background-color: rgb(0 0 0 / 88%);
+  border-color: var(--color-divider);
+  background-color: var(--dive-header-solid);
   box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+}
+
+.app-layout:has(.sub-page-layout) .site-header {
+  border-color: var(--color-divider);
+  background-color: var(--dive-header-solid);
+}
+
+.site-header__ceiling-light {
+  --overhead: #1e679f;
+  position: absolute;
+  z-index: 0;
+  inset: 0 -70vw auto;
+  height: 56svh;
+  opacity: var(--home-ceiling-opacity, 1);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: opacity 1750ms ease-in-out;
+  background: radial-gradient(ellipse min(570px, 76vw) 52svh at 50% -7svh,
+    color-mix(in srgb, var(--overhead) 82%, transparent),
+    color-mix(in srgb, var(--overhead) 66%, transparent) 23%,
+    color-mix(in srgb, var(--overhead) 40%, transparent) 41%,
+    color-mix(in srgb, var(--overhead) 17%, transparent) 61%,
+    color-mix(in srgb, var(--overhead) 4%, transparent) 81%,
+    transparent);
+}
+
+.app-layout:has(.sub-page-layout) .site-header__ceiling-light {
+  opacity: 0.5;
+  transition: opacity 850ms var(--ease-standard);
+}
+
+.app-layout:has(.home-page) .site-header__ceiling-light { transition: none; }
+
+.site-header > .page-container { position: relative; }
+
+.site-header :is(
+  .site-header__menu-button:is(:hover, :active),
+  .site-header.is-menu-open .site-header__menu-button,
+  .site-header__close-button:is(:hover, :active)
+) {
+  background-color: var(--color-primary-soft);
 }
 
 .site-header__inner {
@@ -36,6 +76,7 @@
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
+  min-height: 44px;
   color: var(--color-text-primary);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
@@ -44,11 +85,11 @@
 }
 
 .site-header__logo-image {
-  width: clamp(116px, 10vw, 152px);
+  width: clamp(60px, 6vw, 90px);
   height: auto;
   max-height: calc(var(--header-height-desktop) - var(--space-5));
   object-fit: contain;
-  filter: none;
+  filter: brightness(0) invert(1);
   mix-blend-mode: normal;
   opacity: 1;
   transform: scale(1);
@@ -79,39 +120,31 @@
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .site-header__navigation-link::after {
   position: absolute;
   right: var(--space-3);
-  bottom: 5px;
+  bottom: 6px;
   left: var(--space-3);
-  height: 2px;
-  border-radius: var(--radius-pill);
-  background-color: var(--color-primary);
+  height: 1px;
+  background-color: currentColor;
   content: "";
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 
-.site-header__navigation-link:hover,
-.site-header__navigation-link:active,
-.site-header__navigation-link.is-active {
+.site-header__navigation-link:is(:hover, :focus-visible, :active, .is-active) {
   color: var(--color-primary);
-  background-color: var(--color-primary-soft);
 }
 
 .site-header__navigation-link.is-active {
   font-weight: var(--font-weight-semibold);
 }
 
-.site-header__navigation-link:hover::after,
-.site-header__navigation-link:focus-visible::after,
-.site-header__navigation-link.is-active::after {
+.site-header__navigation-link:is(:hover, :focus-visible, :active, .is-active)::after {
   transform: scaleX(1);
 }
 
@@ -166,7 +199,7 @@
   height: 100dvh;
   overflow-y: auto;
   padding: var(--space-5);
-  background-color: #080a0f;
+  background-color: var(--dive-header-solid);
   box-shadow: var(--shadow-floating);
 }
 
@@ -237,21 +270,7 @@
 }
 
 .site-header__mobile-navigation-list .site-header__navigation-link::after {
-  top: var(--space-3);
-  right: auto;
-  bottom: var(--space-3);
-  left: 0;
-  width: 3px;
-  height: auto;
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
-.site-header__mobile-navigation-list
-  .site-header__navigation-link.is-active::after,
-.site-header__mobile-navigation-list
-  .site-header__navigation-link:focus-visible::after {
-  transform: scaleY(1);
+  inset-inline: var(--space-4);
 }
 
 @media (max-width: 1279px) {
@@ -274,39 +293,25 @@
   }
 
   .site-header__logo-image {
-    width: clamp(104px, 34vw, 124px);
+    width: clamp(54px, 12.5vw, 66px);
     max-height: calc(var(--header-height-mobile) - var(--space-4));
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .site-header,
-  .site-header__navigation-link::after {
-    transition: none;
-  }
-
-  .site-header__logo-image,
-  .site-header__close-image {
-    transition-duration: 0.01ms;
-  }
+.site-header__drawer {
+  animation: drawer-enter var(--duration-fast) var(--ease-emphasized);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .site-header__drawer {
-    animation: drawer-enter var(--duration-fast) var(--ease-emphasized);
-  }
+.site-header__backdrop {
+  animation: backdrop-enter var(--duration-fast) var(--ease-standard);
+}
 
-  .site-header__backdrop {
-    animation: backdrop-enter var(--duration-fast) var(--ease-standard);
-  }
+.site-header__mobile-layer.is-closing .site-header__drawer {
+  animation: drawer-exit var(--duration-fast) var(--ease-emphasized) forwards;
+}
 
-  .site-header__mobile-layer.is-closing .site-header__drawer {
-    animation: drawer-exit var(--duration-fast) var(--ease-emphasized) forwards;
-  }
-
-  .site-header__mobile-layer.is-closing .site-header__backdrop {
-    animation: backdrop-exit var(--duration-fast) var(--ease-standard) forwards;
-  }
+.site-header__mobile-layer.is-closing .site-header__backdrop {
+  animation: backdrop-exit var(--duration-fast) var(--ease-standard) forwards;
 }
 
 @keyframes drawer-enter {

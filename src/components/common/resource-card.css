@@ -60,10 +60,3 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .resource-card:hover,
-  .resource-card:focus-visible {
-    transform: none;
-  }
-}

@@ -1,30 +1,41 @@
 import Lenis from 'lenis'
-import { useEffect, useRef, type PropsWithChildren } from 'react'
+import { useLayoutEffect, useRef, type PropsWithChildren } from 'react'
+import { useMatch } from 'react-router-dom'
 import { LenisContext } from './lenis-context'
 
 interface LenisProviderProps extends PropsWithChildren {
   isPaused: boolean
+  holdAtHero: boolean
 }
 
-export function LenisProvider({ children, isPaused }: LenisProviderProps) {
+export function LenisProvider({ children, isPaused, holdAtHero }: LenisProviderProps) {
+  const isHome = Boolean(useMatch({ path: '/', end: true }))
+  const homeScroll = useRef(isHome)
   const lenisRef = useRef<Lenis | null>(null)
   const initiallyPausedRef = useRef(isPaused)
 
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
+  useLayoutEffect(() => {
+    homeScroll.current = isHome
+  }, [isHome])
 
-    if (prefersReducedMotion) {
-      return
-    }
-
-    const lenis = new Lenis()
+  useLayoutEffect(() => {
+    const lenis = new Lenis({
+      wheelMultiplier: 0.85,
+      virtualScroll: (input) => {
+        if (homeScroll.current && input.event.type === 'wheel') {
+          const distance = Math.abs(input.deltaY) * 0.72
+          // Soften long wheel impulses without slowing normal wheel ticks further.
+          const softened = distance > 120 ? Math.min(205, 120 + (distance - 120) * 0.44) : distance
+          input.deltaY = Math.sign(input.deltaY) * softened
+        }
+        return true
+      },
+    })
     lenisRef.current = lenis
 
     if (initiallyPausedRef.current) {
       lenis.stop()
-      lenis.scrollTo(0, { immediate: true })
+      lenis.scrollTo(0, { immediate: true, force: true })
     }
 
     let animationFrameId = 0
@@ -43,21 +54,26 @@ export function LenisProvider({ children, isPaused }: LenisProviderProps) {
     }
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const lenis = lenisRef.current
 
     if (!lenis) return
 
     if (isPaused) {
       lenis.stop()
-      lenis.scrollTo(0, { immediate: true })
+      if (holdAtHero) {
+        window.scrollTo({ top: 0, behavior: 'instant' })
+        lenis.resize()
+      }
+      lenis.scrollTo(0, { immediate: true, force: true })
       return
     }
 
     lenis.resize()
-    lenis.scrollTo(0, { immediate: true })
     lenis.start()
-  }, [isPaused])
+    const fragment = document.getElementById(window.location.hash.slice(1))
+    lenis.scrollTo(fragment ?? 0, { immediate: true })
+  }, [holdAtHero, isPaused])
 
   return <LenisContext.Provider value={lenisRef}>{children}</LenisContext.Provider>
 }

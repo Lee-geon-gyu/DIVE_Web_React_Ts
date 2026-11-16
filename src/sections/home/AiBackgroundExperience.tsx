@@ -19,9 +19,6 @@ export function AiBackgroundExperience({
 
     if (!range || !background) return
 
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
     ScrollTrigger.getById('ai-background-range')?.kill()
 
     const trigger = ScrollTrigger.create({
@@ -34,7 +31,7 @@ export function AiBackgroundExperience({
       onLeave: () =>
         gsap.to(background, {
           autoAlpha: 0,
-          duration: prefersReducedMotion ? 0 : 0.4,
+          duration: 0.4,
           ease: 'power1.out',
           overwrite: true,
         }),

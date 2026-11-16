@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import menuCloseWhite from '../../assets/common/menu-close-white.png'
+import headerLogoSrc from '../../assets/common/dive-tablet-logo.webp'
 import { primaryNavigationItems } from '../../data/navigation'
 import './header.css'
-
-const headerLogoSrc = `${import.meta.env.BASE_URL}DIVE_logo_Typo.png`
 
 function getNavigationClassName({ isActive }: { isActive: boolean }) {
   return isActive
@@ -125,20 +124,22 @@ export function Header() {
           isMenuVisible ? ' is-menu-open' : ''
         }`}
       >
+        <div className="site-header__ceiling-light" aria-hidden="true" />
         <div className="page-container">
           <div className="content-container site-header__inner">
             <NavLink
               className="site-header__logo"
               to="/"
               end
-              aria-label="DIVE 홈으로 이동"
+              data-scroll-to-top=""
+              aria-label={location.pathname === '/' ? 'DIVE 맨 위로 이동' : 'DIVE 홈으로 이동'}
             >
               <img
                 className="site-header__logo-image"
                 src={headerLogoSrc}
                 alt=""
-                width="1724"
-                height="500"
+                width="280"
+                height="78"
                 decoding="async"
               />
             </NavLink>
@@ -166,6 +167,7 @@ export function Header() {
               aria-controls="mobile-navigation"
               aria-expanded={isMenuOpen}
               onClick={isMenuOpen ? closeMenu : openMenu}
+              inert={isMenuVisible}
             >
               <span aria-hidden="true" />
               <span aria-hidden="true" />
@@ -204,8 +206,8 @@ export function Header() {
                     className="site-header__logo-image"
                     src={headerLogoSrc}
                     alt=""
-                    width="1724"
-                    height="500"
+                    width="280"
+                    height="78"
                     decoding="async"
                   />
                 </span>

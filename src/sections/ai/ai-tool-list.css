@@ -163,34 +163,3 @@
     gap: var(--space-6);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-tool-list__exit-space {
-    height: 0;
-  }
-
-  .ai-tool-list--pinned {
-    margin-top: -100svh;
-  }
-
-  .ai-tool-list--pinned .ai-tool-list__pin {
-    height: auto;
-    overflow: visible;
-  }
-
-  .ai-tool-list--pinned .ai-tool-list__container,
-  .ai-tool-list--pinned .ai-tool-list__pin .explorer-layout,
-  .ai-tool-list--pinned .ai-tool-list__stage,
-  .ai-tool-list--pinned .ai-tool-list__viewport {
-    height: auto;
-  }
-
-  .ai-tool-list--pinned .ai-tool-list__viewport {
-    overflow: visible;
-  }
-
-  .ai-tool-list--pinned .ai-tool-list__track {
-    transform: none;
-    will-change: auto;
-  }
-}

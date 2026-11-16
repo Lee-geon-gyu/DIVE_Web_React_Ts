@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ContentCard } from '../common/ContentCard'
 import type { ResponsiveGuideItem } from '../../data/responsiveGuides'
 import './responsive-guide-card.css'
 
@@ -8,9 +8,9 @@ interface ResponsiveGuideCardProps {
 
 export function ResponsiveGuideCard({ guide }: ResponsiveGuideCardProps) {
   return (
-    <Link className="responsive-guide-card" to={guide.to}>
+    <ContentCard className="responsive-guide-card" to={guide.to}>
       <div className="responsive-guide-card__meta">
-        <span className="responsive-guide-card__category">
+        <span className="d-badge responsive-guide-card__category">
           {guide.category}
         </span>
         <span className="responsive-guide-card__viewport">
@@ -47,6 +47,6 @@ export function ResponsiveGuideCard({ guide }: ResponsiveGuideCardProps) {
         </dl>
         <span className="responsive-guide-card__link-label">살펴보기</span>
       </div>
-    </Link>
+    </ContentCard>
   )
 }

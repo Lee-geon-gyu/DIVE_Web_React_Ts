@@ -1,212 +1,87 @@
-import { gsap } from 'gsap'
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
-import {
-  Outlet,
-  useLocation,
-  useNavigate,
-  useNavigationType,
-} from 'react-router-dom'
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import { Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useLenisRef } from '../../app/providers/lenis-context'
-import { preloadSubPageBackground } from '../../lib/preloadSubPageBackground'
+import { homeCategories } from '../../data/homeCategories'
 import './page-transition.css'
 
-const TRANSITION_DURATION = 0.3
-const TRANSITION_EASE = 'power2.out'
-const ROUTER_BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '')
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '')
+const categoryPaths = new Set(homeCategories.map(({ to }) => to))
 
-function getRouterPath(url: URL) {
-  if (
-    ROUTER_BASENAME &&
-    url.pathname !== ROUTER_BASENAME &&
-    !url.pathname.startsWith(`${ROUTER_BASENAME}/`)
-  ) {
-    return null
-  }
+function getRoute(anchor: HTMLAnchorElement) {
+  if (anchor.hasAttribute('download') || (anchor.target && anchor.target !== '_self')) return
+  const url = new URL(anchor.href)
+  if (url.origin !== window.location.origin) return
+  if (basename && url.pathname !== basename && !url.pathname.startsWith(`${basename}/`)) return
 
-  const pathname = ROUTER_BASENAME
-    ? url.pathname.slice(ROUTER_BASENAME.length) || '/'
-    : url.pathname
-
-  return `${pathname}${url.search}`
-}
-
-function prefersReducedMotion() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const path = url.pathname.slice(basename.length).replace(/\/$/, '') || '/'
+  if (path !== '/' && !categoryPaths.has(path)) return
+  return { path, search: url.search, hash: url.hash }
 }
 
 export function PageTransition() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const animationRef = useRef<gsap.core.Tween | null>(null)
-  const navigationRequestRef = useRef(0)
   const location = useLocation()
-  const previousLocationKeyRef = useRef(location.key)
+  const previousPath = useRef(location.pathname)
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const lenisRef = useLenisRef()
 
-  const moveToPageTop = useCallback(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true })
-      return
-    }
-
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }, [lenisRef])
-
-  const startRouteTransition = useCallback(
-    async (to: string) => {
-      const requestId = ++navigationRequestRef.current
-
-      await preloadSubPageBackground(to)
-
-      if (requestId !== navigationRequestRef.current) return
-
-      const container = containerRef.current
-
-      if (!container || prefersReducedMotion()) {
-        navigate(to)
-        return
-      }
-
-      animationRef.current?.kill()
-      gsap.killTweensOf(container)
-
-      animationRef.current = gsap.to(container, {
-        opacity: 0,
-        y: -4,
-        duration: TRANSITION_DURATION,
-        ease: TRANSITION_EASE,
-        overwrite: true,
-        onComplete: () => navigate(to),
-      })
-    },
-    [navigate],
-  )
-
   useEffect(() => {
-    const handleInternalLinkClick = (event: MouseEvent) => {
+    function handleClick(event: MouseEvent) {
       if (
-        event.defaultPrevented ||
-        event.button !== 0 ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey ||
-        event.altKey
-      ) {
-        return
-      }
+        event.defaultPrevented || event.button !== 0 ||
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
+        !(event.target instanceof Element)
+      ) return
 
-      const target = event.target
-
-      if (!(target instanceof Element)) {
-        return
-      }
-
-      const anchor = target.closest<HTMLAnchorElement>('a[href]')
-
-      if (
-        !anchor ||
-        anchor.hasAttribute('download') ||
-        (anchor.target && anchor.target !== '_self')
-      ) {
-        return
-      }
-
-      const url = new URL(anchor.href, window.location.href)
-
-      if (url.origin !== window.location.origin || url.hash) {
-        return
-      }
-
-      const targetPath = getRouterPath(url)
-
-      if (!targetPath) {
-        return
-      }
-
-      const currentPath = `${location.pathname}${location.search}`
-
-      if (currentPath === targetPath) {
-        event.preventDefault()
-        return
-      }
+      const anchor = event.target.closest<HTMLAnchorElement>('a[href]')
+      if (!anchor || anchor.getAttribute('href')?.startsWith('#')) return
+      const route = getRoute(anchor)
+      if (!route) return
+      const samePath = route.path === (location.pathname.replace(/\/$/, '') || '/')
+      if (samePath && route.hash) return
 
       event.preventDefault()
-      void startRouteTransition(targetPath)
+      if (samePath && anchor.hasAttribute('data-scroll-to-top')) {
+        if (location.hash || route.search !== location.search) {
+          void navigate(`${route.path}${route.search}`, { replace: true, preventScrollReset: true })
+        }
+        const lenis = lenisRef.current
+        if (lenis && !lenis.isStopped) {
+          // A native jump can arrive before Lenis has updated its scroll position.
+          if (Math.abs(lenis.actualScroll - lenis.animatedScroll) > 1) {
+            lenis.stop()
+            lenis.start()
+          }
+          lenis.scrollTo(0)
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+        return
+      }
+      if (samePath && route.search === location.search) return
+
+      void navigate(`${route.path}${route.search}${route.hash}`, { viewTransition: true })
     }
 
-    document.addEventListener('click', handleInternalLinkClick, true)
-
-    return () => {
-      document.removeEventListener('click', handleInternalLinkClick, true)
-    }
-  }, [location.pathname, location.search, startRouteTransition])
+    document.addEventListener('click', handleClick, true)
+    return () => document.removeEventListener('click', handleClick, true)
+  }, [lenisRef, location.hash, location.pathname, location.search, navigate])
 
   useLayoutEffect(() => {
-    if (previousLocationKeyRef.current === location.key) {
-      return
-    }
+    const pathChanged = previousPath.current !== location.pathname
+    previousPath.current = location.pathname
+    if (!pathChanged) return
 
-    previousLocationKeyRef.current = location.key
+    document.getElementById('main-content')?.focus({ preventScroll: true })
 
-    const container = containerRef.current
-
-    if (!container) {
-      return
-    }
-
-    animationRef.current?.kill()
-    gsap.killTweensOf(container)
-
-    if (location.hash) {
-      gsap.set(container, { clearProps: 'opacity,transform' })
-      return
-    }
-
-    if (navigationType !== 'POP') {
-      moveToPageTop()
-    }
-
-    const main = document.getElementById('main-content')
-    main?.focus({ preventScroll: true })
-
-    if (prefersReducedMotion()) {
-      gsap.set(container, { clearProps: 'opacity,transform' })
-      return
-    }
-
-    animationRef.current = gsap.fromTo(
-      container,
-      { opacity: 0, y: 4 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: TRANSITION_DURATION,
-        ease: TRANSITION_EASE,
-        overwrite: true,
-        onComplete: () => {
-          gsap.set(container, { clearProps: 'opacity,transform' })
-        },
-      },
+    if (typeof document.startViewTransition === 'function' && navigationType !== 'POP') return
+    const animation = containerRef.current?.animate(
+      [{ opacity: 0.5, translate: '0 12px' }, { opacity: 1, translate: '0 0' }],
+      { duration: 420, easing: 'cubic-bezier(.2, 0, 0, 1)' },
     )
-  }, [location.hash, location.key, moveToPageTop, navigationType])
+    return () => animation?.cancel()
+  }, [location.pathname, navigationType])
 
-  useEffect(() => {
-    const container = containerRef.current
-
-    return () => {
-      navigationRequestRef.current += 1
-      animationRef.current?.kill()
-
-      if (container) {
-        gsap.killTweensOf(container)
-      }
-    }
-  }, [])
-
-  return (
-    <div ref={containerRef} className="page-transition">
-      <Outlet />
-    </div>
-  )
+  return <div ref={containerRef} className="page-transition"><Outlet /></div>
 }

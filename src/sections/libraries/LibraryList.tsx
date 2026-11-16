@@ -71,7 +71,7 @@ export function LibraryList() {
           <SectionHeader
             titleId={titleId}
             title="웹 제작 라이브러리"
-            description="라이브러리별 주요 역할과 적용 상황을 확인하고, 프로젝트에 도입하기 전에 살펴봐야 할 기준을 함께 확인하세요."
+            description="라이브러리별 주요 역할과 적용 상황을 확인하고 프로젝트에 도입하기 전에 살펴봐야 할 기준을 함께 확인하세요."
             status={
               filteredLibraries.length > 0
                 ? `총 ${filteredLibraries.length}개의 라이브러리`

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ContentCard } from '../common/ContentCard'
 import type { AiToolItem } from '../../data/aiTools'
 import './ai-tool-detail-card.css'
 
@@ -8,15 +8,17 @@ interface AiToolDetailCardProps {
 
 export function AiToolDetailCard({ tool }: AiToolDetailCardProps) {
   return (
-    <Link className="ai-tool-detail-card" to={tool.to}>
+    <ContentCard className="ai-tool-detail-card" to={tool.to}>
+      <div className="ai-tool-detail-card__visual" data-tool={tool.id}>
+        <h3 className="ai-tool-detail-card__name">{tool.name}</h3>
+      </div>
       <div className="ai-tool-detail-card__meta">
-        <span className="ai-tool-detail-card__category">{tool.category}</span>
+        <span className="d-badge ai-tool-detail-card__category">{tool.category}</span>
         <span className="ai-tool-detail-card__access-type">
           {tool.accessType}
         </span>
       </div>
 
-      <h3 className="ai-tool-detail-card__name">{tool.name}</h3>
       <p className="ai-tool-detail-card__purpose">{tool.purpose}</p>
       <p className="ai-tool-detail-card__summary">{tool.summary}</p>
 
@@ -38,6 +40,6 @@ export function AiToolDetailCard({ tool }: AiToolDetailCardProps) {
         </div>
         <span className="ai-tool-detail-card__link-label">자세히 보기</span>
       </div>
-    </Link>
+    </ContentCard>
   )
 }

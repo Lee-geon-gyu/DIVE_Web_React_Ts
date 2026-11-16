@@ -12,6 +12,7 @@ export const router = createBrowserRouter(
     {
       path: '/',
       element: <App />,
+      hydrateFallbackElement: <div aria-hidden="true" />,
       children: [
         {
           index: true,

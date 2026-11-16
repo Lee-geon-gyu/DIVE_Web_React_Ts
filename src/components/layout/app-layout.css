@@ -4,8 +4,7 @@
 }
 
 .content-container {
-  width: min(100%, var(--content-max-width));
-  margin-inline: auto;
+  width: 100%;
 }
 
 .app-layout {
@@ -16,20 +15,10 @@
 }
 
 .app-layout--loading {
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   user-select: none;
-}
-
-.app-layout--loading :is(.site-header, .scroll-progress) {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.app-layout--loading .site-footer {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .app-layout__main {

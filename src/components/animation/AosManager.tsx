@@ -2,7 +2,6 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import './aos-manager.css'
 
 let isAosInitialized = false
 
@@ -22,8 +21,6 @@ export function AosManager() {
         once: true,
         mirror: false,
         disableMutationObserver: true,
-        disable: () =>
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       })
       isAosInitialized = true
     }

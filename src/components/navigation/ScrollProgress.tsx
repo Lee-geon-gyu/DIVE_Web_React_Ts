@@ -1,33 +1,40 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, type ChangeEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLenisRef } from '../../app/providers/lenis-context'
-import { gsap, ScrollTrigger } from '../../lib/animation/gsap'
+import { ScrollTrigger } from '../../lib/animation/gsap'
 import './scroll-progress.css'
+
+const scrollSteps = 1000
+
+function getScrollLimit() {
+  return Math.max(0, (document.scrollingElement ?? document.documentElement).scrollHeight - window.innerHeight)
+}
+
+function getScrollProgress(limit: number) {
+  return limit > 0 ? Math.min(1, Math.max(0, window.scrollY / limit)) : 0
+}
 
 export function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null)
+  const controlRef = useRef<HTMLInputElement>(null)
   const lenisRef = useLenisRef()
   const location = useLocation()
 
   useLayoutEffect(() => {
     const bar = barRef.current
+    const control = controlRef.current
 
-    if (!bar) return
+    if (!bar || !control) return
 
-    const setScale = gsap.quickSetter(bar, 'scaleX')
-    let connectionFrame = 0
     let syncFrame = 0
-    let removeScrollListener: () => void = () => undefined
 
     const updateProgressBar = () => {
-      const documentHeight = Math.max(
-        document.documentElement.scrollHeight,
-        document.body.scrollHeight,
-      )
-      const scrollLimit = Math.max(0, documentHeight - window.innerHeight)
-      const progress = scrollLimit > 0 ? window.scrollY / scrollLimit : 0
-
-      setScale(gsap.utils.clamp(0, 1, progress))
+      const limit = getScrollLimit()
+      const progress = getScrollProgress(limit)
+      bar.style.width = `${progress * 100}%`
+      control.value = String(Math.round(progress * scrollSteps))
+      control.disabled = limit === 0
+      control.setAttribute('aria-valuetext', `${Math.round(progress * 100)}%`)
     }
 
     const syncProgressBar = () => {
@@ -50,20 +57,11 @@ export function ScrollProgress() {
       syncProgressBar()
     }
 
-    const connectToLenis = () => {
-      const lenis = lenisRef.current
-
-      if (!lenis) {
-        connectionFrame = window.requestAnimationFrame(connectToLenis)
-        return
-      }
-
-      removeScrollListener = lenis.on('scroll', updateProgressBar)
-      updateProgressBar()
-    }
-
+    const observer = new ResizeObserver(updateProgressBar)
+    observer.observe(document.body)
     updateProgressBar()
-    connectToLenis()
+    window.addEventListener('scroll', updateProgressBar, { passive: true })
+    window.addEventListener('resize', updateProgressBar)
     window.addEventListener('load', syncProgressBar)
     window.addEventListener('pageshow', handlePageShow)
 
@@ -72,18 +70,43 @@ export function ScrollProgress() {
     }
 
     return () => {
-      window.cancelAnimationFrame(connectionFrame)
       window.cancelAnimationFrame(syncFrame)
+      observer.disconnect()
+      window.removeEventListener('scroll', updateProgressBar)
+      window.removeEventListener('resize', updateProgressBar)
       window.removeEventListener('load', syncProgressBar)
       window.removeEventListener('pageshow', handlePageShow)
-      removeScrollListener()
-      gsap.killTweensOf(bar)
     }
   }, [lenisRef, location.key])
 
+  function scrollFromProgress(event: ChangeEvent<HTMLInputElement>) {
+    const control = event.currentTarget
+    const limit = getScrollLimit()
+    const lenis = lenisRef.current
+
+    if (lenis?.isStopped || lenis?.isLocked) {
+      control.value = String(Math.round(getScrollProgress(limit) * scrollSteps))
+      return
+    }
+
+    const top = (control.valueAsNumber / scrollSteps) * limit
+    if (lenis) lenis.scrollTo(top, { immediate: true })
+    else window.scrollTo({ top, behavior: 'instant' })
+  }
+
   return (
-    <div className="scroll-progress" aria-hidden="true">
-      <div ref={barRef} className="scroll-progress__bar" />
+    <div className="scroll-progress">
+      <div ref={barRef} className="scroll-progress__bar" aria-hidden="true" />
+      <input
+        ref={controlRef}
+        className="scroll-progress__control"
+        type="range"
+        min={0}
+        max={scrollSteps}
+        defaultValue={0}
+        aria-label="페이지 스크롤 위치"
+        onChange={scrollFromProgress}
+      />
     </div>
   )
 }

@@ -127,10 +127,3 @@
     flex-direction: column;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .responsive-guide-card:hover,
-  .responsive-guide-card:focus-visible {
-    transform: none;
-  }
-}

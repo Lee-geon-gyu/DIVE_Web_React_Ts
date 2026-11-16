@@ -150,32 +150,3 @@
     transform: none;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  :is(
-      .reference-card,
-      .ai-tool-card,
-      .ai-tool-detail-card,
-      .resource-card,
-      .resource-detail-card,
-      .responsive-guide-card,
-      .library-card,
-      .publishing-guide-card,
-      .home-categories__link,
-      .home-featured-guides__link
-    ):is(:hover, :focus-visible),
-  :is(
-      .reference-card__link-label,
-      .ai-tool-card__link-label,
-      .ai-tool-detail-card__link-label,
-      .resource-card__link-label,
-      .resource-detail-card__link-label,
-      .responsive-guide-card__link-label,
-      .library-card__link-label,
-      .publishing-guide-card__link-label,
-      .home-categories__link-label,
-      .home-featured-guides__link-label
-    ) {
-    transform: none;
-  }
-}

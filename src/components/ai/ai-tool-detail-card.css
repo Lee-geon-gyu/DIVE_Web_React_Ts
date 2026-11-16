@@ -47,9 +47,38 @@
   font-size: var(--font-size-xs);
 }
 
-.ai-tool-detail-card__name {
-  font-size: var(--font-size-xl);
+.ai-tool-detail-card__visual {
+  --tool-tone: #336657;
+  display: grid;
+  width: 100%;
+  min-height: clamp(6.25rem, 10vw, 9rem);
+  place-items: center;
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--tool-tone) 48%, transparent);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--tool-tone) 76%, #081016), #090f16);
 }
+
+.ai-tool-detail-card__visual[data-tool='figma-ai-ui-design'] { --tool-tone: #68519b; }
+.ai-tool-detail-card__visual[data-tool='adobe-firefly-image'] { --tool-tone: #884049; }
+.ai-tool-detail-card__visual[data-tool='github-copilot-code'] { --tool-tone: #354578; }
+.ai-tool-detail-card__visual[data-tool='claude-code-review'] { --tool-tone: #89563c; }
+.ai-tool-detail-card__visual[data-tool='notion-ai-research'] { --tool-tone: #54595b; }
+.ai-tool-detail-card__visual[data-tool='gamma-presentation'] { --tool-tone: #7e4474; }
+.ai-tool-detail-card__visual[data-tool='framer-ai-prototyping'] { --tool-tone: #286f8b; }
+
+.ai-tool-detail-card__name {
+  color: #f2f8ff;
+  font-size: clamp(1.55rem, 2.65vw, 2.85rem);
+  font-weight: 780;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.ai-tool-detail-card:is(:hover, :focus-visible) .ai-tool-detail-card__visual .ai-tool-detail-card__name { color: #fff; }
 
 .ai-tool-detail-card__purpose {
   color: var(--color-text-primary);
@@ -94,7 +123,6 @@
   gap: var(--space-4);
   margin-top: auto;
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
 }
 
 .ai-tool-detail-card__recommended {
@@ -117,12 +145,5 @@
   .ai-tool-detail-card__footer {
     align-items: flex-start;
     flex-direction: column;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-tool-detail-card:hover,
-  .ai-tool-detail-card:focus-visible {
-    transform: none;
   }
 }

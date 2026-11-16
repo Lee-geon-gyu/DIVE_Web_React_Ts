@@ -3,233 +3,88 @@
   z-index: var(--z-modal);
   inset: 0;
   display: grid;
-  width: 100%;
-  height: 100dvh;
-  overflow: hidden;
+  overflow: clip;
   place-items: center;
   padding: var(--space-5);
-  color: #ffffff;
-  background-color: transparent;
+  color: #fff;
+  background: radial-gradient(ellipse at center, #081c18 0%, #040e0c 34%, #000 78%);
+  touch-action: none;
 }
 
-.app-loader__overlay {
-  position: absolute;
-  pointer-events: none;
-}
-
-.app-loader__overlay {
-  inset: 0;
-  background-color: rgb(0 0 0 / 6%);
-}
-
-.app-loader__stage {
-  --loader-inline-image-height: clamp(0.9rem, 3.2vw, 2.5rem);
-  --loader-inline-text-offset-y: 0.06em;
-  --loader-final-logo-height: clamp(44px, 5.04vw, 69px);
+.app-loader__phrase {
   position: relative;
-  display: grid;
-  width: min(100%, 72rem);
-  min-height: clamp(120px, 20vw, 260px);
-  place-items: center;
-}
-
-.app-loader__phrase {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.app-loader__phrase {
-  display: inline-flex;
-  align-items: flex-end;
+  isolation: isolate;
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  margin: 0;
-  color: #ffffff;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.app-loader__phrase {
-  gap: clamp(0.4rem, 1.2vw, 1rem);
-  font-size: clamp(0.9rem, 3.2vw, 2.5rem);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.01em;
-}
-
-.app-loader__skip-hint {
-  position: fixed;
-  bottom: 10%;
-  left: 50%;
-  color: rgb(255 255 255 / 72%);
-  font-size: clamp(0.875rem, 1.1vw, 1rem);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  pointer-events: none;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  text-decoration: underline;
-  text-underline-offset: 8px;
-  text-decoration-thickness: 1px;
-}
-
-.app-loader__skip-hint kbd {
-  font: inherit;
-  font-weight: var(--font-weight-semibold);
+  column-gap: 0.23em;
+  font-size: clamp(1.77rem, 6.3vw, 5.4rem);
+  font-weight: 670;
+  line-height: 1.15;
+  text-align: center;
 }
 
 .app-loader__word {
   display: inline-flex;
-  align-items: flex-end;
+  align-items: baseline;
+  clip-path: inset(0 0 0);
 }
 
-.app-loader__character {
-  display: inline-flex;
-  height: var(--loader-inline-image-height);
-  align-items: flex-end;
-  color: #ffffff;
-  opacity: 0;
-  line-height: 1;
-  transform-origin: center;
-}
+.app-loader__glyph { visibility: hidden; }
 
-.app-loader__character {
-  will-change: transform, opacity, filter;
-}
-
-.app-loader__character--initial {
+.app-loader__initial {
+  display: inline-block;
   width: auto;
+  height: 0.77em;
+  align-self: baseline;
+  filter: brightness(0) invert(1);
 }
 
-.app-loader__letter-size {
-  display: inline-flex;
-  width: auto;
-  height: 100%;
-  align-items: flex-end;
-  flex: none;
-  line-height: 1;
-}
-
-.app-loader__character-text {
-  display: block;
-  line-height: 0.8;
-  transform: translateY(var(--loader-inline-text-offset-y));
-}
-
-.app-loader__word:nth-child(1)
-  > .app-loader__character--initial
-  + .app-loader__character--remaining,
-.app-loader__word:nth-child(2)
-  > .app-loader__character--initial
-  + .app-loader__character--remaining,
-.app-loader__word:nth-child(4)
-  > .app-loader__character--initial
-  + .app-loader__character--remaining {
-  margin-left: 4.5px;
-}
-
-.app-loader__word:nth-child(3)
-  > .app-loader__character--initial
-  + .app-loader__character--remaining {
-  margin-left: -4.5px;
-}
-
-.app-loader__letter-image {
-  display: block;
-  width: auto;
-  height: var(--loader-inline-image-height);
-  max-width: none;
-  max-height: none;
-  align-self: flex-end;
-  flex: none;
-  object-fit: contain;
-  object-position: center bottom;
-}
-
-.app-loader__assembly-image {
-  display: block;
-  width: auto;
-  height: var(--loader-final-logo-height);
-  max-width: none;
-  max-height: none;
-  object-fit: contain;
-}
-
-.app-loader__logo-assembly {
+.app-loader__meter {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0;
-  line-height: 0;
-  opacity: 0;
-  translate: -50% -50%;
-  transform-origin: center center;
-  will-change: transform, opacity;
+  inset: auto var(--page-padding) max(2rem, env(safe-area-inset-bottom));
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  color: #b3dad4;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }
 
-.app-loader__assembly-letter {
-  display: block;
-  flex: 0 0 auto;
+.app-loader__meter progress {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
 }
 
-.app-loader__logo {
+.app-loader__track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  gap: clamp(2px, 0.45vw, 7px);
   width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
-  object-fit: contain;
-  opacity: 0;
-  filter: none;
-  mix-blend-mode: normal;
-  will-change: opacity;
+  height: clamp(0.62rem, 1.13vw, 1rem);
 }
 
-.app-loader__logo-motion {
+.app-loader__track span {
+  background:
+    linear-gradient(90deg, #20ae89, #65fce0) left / var(--segment-fill, 0%) 100% no-repeat,
+    #29443d;
+  clip-path: polygon(18% 0, 100% 0, 82% 100%, 0 100%);
+}
+
+.app-loader__track span:first-child { --segment-fill: 20%; }
+
+.app-loader__track::after {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--loader-final-logo-height) * 1715 / 480);
-  height: var(--loader-final-logo-height);
-  translate: -50% -50%;
-  transform-origin: center center;
-  will-change: left, top, width, height;
-}
-
-@media (max-width: 767px) {
-  .app-loader {
-    padding-inline: var(--space-4);
-  }
-
-  .app-loader__phrase {
-    gap: 0.3rem;
-    font-size: clamp(0.68rem, 3.4vw, 1rem);
-    letter-spacing: 0;
-  }
-
-  .app-loader__skip-hint {
-    font-size: 1.2rem;
-  }
-
-  .app-loader__logo-layout {
-    font-size: clamp(2.5rem, 13.9vw, 3.625rem);
-  }
-
-  .app-loader__stage {
-    --loader-inline-image-height: clamp(0.68rem, 3.4vw, 1rem);
-    --loader-final-logo-height: clamp(39px, 13.43vw, 56px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-loader__background-parallax {
-    transform: none;
-  }
-
-  .app-loader__background-ambient {
-    transform: none;
-  }
+  inset: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background: transparent;
+  box-shadow: 0 0 14px #4effbd38;
+  clip-path: inset(-12px calc(100% - var(--loader-fill, 1%) - 12px) -12px -12px);
+  content: '';
 }

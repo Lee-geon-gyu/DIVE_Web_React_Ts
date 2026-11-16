@@ -1,0 +1,84 @@
+:root {
+  --dive-accent: var(--color-primary);
+  --dive-rule: var(--color-divider);
+  --dive-route-time: 540ms;
+  --d-radius-selector: var(--radius-pill);
+  --d-radius-field: var(--radius-md);
+  --d-radius-box: var(--radius-lg);
+  --d-color-base-100: var(--color-surface);
+  --d-color-base-200: var(--color-background-subtle);
+  --d-color-base-300: var(--color-border);
+  --d-color-base-content: var(--color-text-primary);
+}
+
+.dive-outline-pill {
+  border: var(--outline-pill-width, 1px) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  background: transparent;
+  box-shadow: none;
+  transition: border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+.dive-outline-pill:is(:hover, :focus-visible, :active, [aria-current='page'], [aria-pressed='true']) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.dive-button.d-btn {
+  --size: 3.1rem;
+  display: inline-flex;
+  min-height: var(--size);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-inline: clamp(0.9rem, 1.5vw, 1.55rem);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 720;
+  line-height: 1.2;
+  white-space: nowrap;
+  touch-action: manipulation;
+  box-shadow: none;
+  transition: background-color var(--duration-fast), border-color var(--duration-fast), translate var(--duration-fast);
+}
+
+.dive-button--light.d-btn { background-color: #f4f9ff; color: #071936; }
+.dive-button--light.d-btn:is(:hover, :focus-visible) { background-color: #c5e1ff; }
+
+.dive-button--glass.d-btn,
+.dive-button--round.d-btn {
+  border-color: #adcefa9e;
+  background-color: #0b244f55;
+  color: #eaf5ff;
+}
+
+.dive-button--glass.d-btn:is(:hover, :focus-visible),
+.dive-button--round.d-btn:is(:hover, :focus-visible) {
+  border-color: #d5eaff;
+  background-color: #244d82;
+}
+
+.dive-button--round.d-btn {
+  --size: 2.85rem;
+  width: var(--size);
+  padding: 0;
+  font-size: 1.55rem;
+  font-weight: 450;
+}
+
+.dive-button.d-btn:active { translate: 0 2px; }
+
+.d-card:not(:any-link) [class$="__link-label"] { display: none; }
+:where(.d-card) { transition: outline-color var(--duration-fast) var(--ease-standard); }
+
+.dive-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

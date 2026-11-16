@@ -1,0 +1,152 @@
+.home-workflow__title {
+  font-size: clamp(2.125rem, 3.15vw, 3.5rem);
+  font-weight: 720;
+  letter-spacing: -0.05em;
+  line-height: 1.12;
+}
+
+.home-workflow__intro {
+  margin-top: var(--space-3);
+  color: var(--home-muted);
+  font-size: clamp(0.875rem, 0.96vw, 1rem);
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.home-workflow__timeline {
+  margin-top: clamp(0.5rem, 1.9svh, 1.25rem);
+}
+
+.home-workflow__stage-content {
+  display: grid;
+  gap: var(--space-4);
+  padding-block: clamp(1.125rem, 3.2svh, 2.25rem);
+}
+
+.home-workflow__stage-title {
+  margin-top: 0.125rem;
+  color: var(--color-primary-hover);
+  font-size: clamp(1.0625rem, 1.35vw, 1.375rem);
+  font-weight: 720;
+  letter-spacing: -0.02em;
+}
+
+.home-workflow__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.2vw, 1.25rem);
+  min-width: 0;
+}
+
+.home-workflow__step {
+  min-width: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.home-workflow__step-link {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--space-2);
+  min-height: clamp(6.5rem, 16svh, 9.25rem);
+  height: 100%;
+  padding: clamp(0.875rem, 2.1svh, 1.25rem) clamp(0.625rem, 1.1vw, 1.25rem);
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 2%);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 300ms var(--ease-standard), background-color 300ms var(--ease-standard), color 300ms var(--ease-standard);
+}
+
+.home-workflow__step-link:is(:hover, :focus-visible) {
+  border-color: var(--home-accent);
+  background-color: color-mix(in srgb, var(--home-accent) 7%, transparent);
+  color: var(--home-accent);
+}
+
+.home-workflow__step-title {
+  display: block;
+  font-size: clamp(1rem, 1.42vw, 1.5rem);
+  font-weight: 730;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.home-workflow__step-descriptions {
+  --arrow-size: clamp(1.5rem, 1.8vw, 1.75rem);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--arrow-size);
+  align-content: end;
+  min-block-size: var(--arrow-size);
+  column-gap: var(--space-2);
+  font-size: clamp(0.8125rem, 0.86vw, 0.9375rem);
+  line-height: 1.35;
+}
+
+.home-workflow__step-descriptions > .home-workflow__copy {
+  grid-column: 1;
+  color: var(--color-text-secondary);
+}
+
+.home-workflow__step-arrow {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-end: 0;
+  display: grid;
+  place-items: center;
+  inline-size: var(--arrow-size);
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 50%;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.875rem, 1.05vw, 1rem);
+  line-height: 1;
+  transition: border-color 300ms var(--ease-standard), color 300ms var(--ease-standard), translate 300ms var(--ease-standard);
+}
+
+.home-workflow__step-link:is(:hover, :focus-visible) .home-workflow__step-arrow {
+  border-color: currentColor;
+  color: inherit;
+  translate: 4px 0;
+}
+
+.home-workflow__step-link:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+.home-workflow__line, .home-workflow__line-mask { display: block; }
+.home-workflow__line-mask { clip-path: inset(0); }
+
+@media (max-width: 767px) {
+  .home-workflow__title {
+    font-size: clamp(2rem, 6vw, 2.625rem);
+  }
+
+  .home-workflow__timeline {
+    margin-top: var(--space-4);
+  }
+
+  .home-workflow__stage-content {
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+  }
+
+  .home-workflow__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.5rem, 2.2vw, 1.125rem);
+  }
+
+  .home-workflow__step:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+  .home-workflow__step-link {
+    min-height: 6rem;
+    padding-inline: var(--space-2);
+  }
+
+  .home-workflow__step-title {
+    font-size: clamp(0.9375rem, 4vw, 1.125rem);
+  }
+}

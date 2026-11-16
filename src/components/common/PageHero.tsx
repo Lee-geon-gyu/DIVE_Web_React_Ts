@@ -1,47 +1,22 @@
-import { useId, useRef } from 'react'
-import { usePageHeroDecoration } from './usePageHeroDecoration'
+import { useId } from 'react'
+import { useLocation } from 'react-router-dom'
+import { homeCategories } from '../../data/homeCategories'
 import './page-hero.css'
 
 interface PageHeroProps {
   eyebrow: string
-  title: string
-  description: string
-  narrowDescription?: boolean
 }
 
-export function PageHero({
-  eyebrow,
-  title,
-  description,
-  narrowDescription = false,
-}: PageHeroProps) {
+export function PageHero({ eyebrow }: PageHeroProps) {
   const titleId = useId()
-  const heroRef = useRef<HTMLElement>(null)
-
-  usePageHeroDecoration(heroRef)
+  const { pathname } = useLocation()
+  const current = homeCategories.find((category) => category.to === pathname.replace(/\/$/, ''))
 
   return (
-    <section ref={heroRef} className="page-hero" aria-labelledby={titleId}>
-      <div className="page-hero__background" aria-hidden="true">
-        <div className="page-hero__gradient" />
-      </div>
+    <section className="page-hero" aria-labelledby={titleId}>
       <div className="page-container">
         <div className="content-container page-hero__inner">
-          <p className="page-hero__eyebrow" data-aos="fade-up">
-            {eyebrow}
-          </p>
-          <h1 id={titleId} className="page-hero__title" data-aos="fade-up" data-aos-delay="80">
-            {title}
-          </h1>
-          <p
-            className={`page-hero__description${
-              narrowDescription ? ' page-hero__description--narrow' : ''
-            }`}
-            data-aos="fade-up"
-            data-aos-delay="160"
-          >
-            {description}
-          </p>
+          <h1 id={titleId} className="page-hero__title">{current?.title ?? eyebrow}</h1>
         </div>
       </div>
     </section>

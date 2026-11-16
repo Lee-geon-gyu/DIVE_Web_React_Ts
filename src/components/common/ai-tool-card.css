@@ -72,10 +72,3 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-tool-card:hover,
-  .ai-tool-card:focus-visible {
-    transform: none;
-  }
-}

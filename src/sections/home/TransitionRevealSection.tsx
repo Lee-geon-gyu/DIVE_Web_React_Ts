@@ -14,9 +14,6 @@ export function TransitionRevealSection() {
 
     if (!section || !media) return
 
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
     const getFinalRadius = () =>
       Math.hypot(window.innerWidth, window.innerHeight) * 0.55
     const setClipPath = gsap.quickSetter(media, 'clipPath')
@@ -49,14 +46,6 @@ export function TransitionRevealSection() {
       autoAlpha: 0,
       clipPath: `circle(${INITIAL_RADIUS}px at 50% 50%)`,
     })
-
-    if (prefersReducedMotion) {
-      gsap.set(media, { autoAlpha: 1 })
-      updateRadius(1)
-      updateCompletionState(1)
-      return () =>
-        gsap.set(media, { clearProps: 'clipPath,opacity,visibility' })
-    }
 
     const trigger = ScrollTrigger.create({
       id: 'transition-reveal-pin',
@@ -102,6 +91,7 @@ export function TransitionRevealSection() {
           alt=""
           width="2880"
           height="1425"
+          decoding="async"
           draggable={false}
         />
       </div>

@@ -114,10 +114,3 @@
     padding: var(--space-6);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .home-featured-guides__link:hover,
-  .home-featured-guides__link:focus-visible {
-    transform: none;
-  }
-}

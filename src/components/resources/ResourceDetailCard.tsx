@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ContentCard } from '../common/ContentCard'
 import type { ResourceItem } from '../../data/resources'
 import './resource-detail-card.css'
 
@@ -8,9 +8,9 @@ interface ResourceDetailCardProps {
 
 export function ResourceDetailCard({ resource }: ResourceDetailCardProps) {
   return (
-    <Link className="resource-detail-card" to={resource.to}>
+    <ContentCard className="resource-detail-card" to={resource.to}>
       <div className="resource-detail-card__meta">
-        <span className="resource-detail-card__category">
+        <span className="d-badge resource-detail-card__category">
           {resource.category}
         </span>
         <span className="resource-detail-card__format">{resource.format}</span>
@@ -45,6 +45,6 @@ export function ResourceDetailCard({ resource }: ResourceDetailCardProps) {
         </dl>
         <span className="resource-detail-card__link-label">살펴보기</span>
       </div>
-    </Link>
+    </ContentCard>
   )
 }

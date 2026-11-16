@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { ContentCard } from '../common/ContentCard'
 import type { PublishingGuideItem } from '../../data/publishingGuides'
 import './publishing-guide-card.css'
 
@@ -8,9 +8,9 @@ interface PublishingGuideCardProps {
 
 export function PublishingGuideCard({ guide }: PublishingGuideCardProps) {
   return (
-    <Link className="publishing-guide-card" to={guide.to}>
+    <ContentCard className="publishing-guide-card" to={guide.to}>
       <div className="publishing-guide-card__meta">
-        <span className="publishing-guide-card__category">
+        <span className="d-badge publishing-guide-card__category">
           {guide.category}
         </span>
         <span className="publishing-guide-card__work-stage">
@@ -45,6 +45,6 @@ export function PublishingGuideCard({ guide }: PublishingGuideCardProps) {
         </dl>
         <span className="publishing-guide-card__link-label">살펴보기</span>
       </div>
-    </Link>
+    </ContentCard>
   )
 }

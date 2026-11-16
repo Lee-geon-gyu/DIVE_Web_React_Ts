@@ -123,13 +123,3 @@
     height: 100dvh;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-transition-reveal__media {
-    will-change: auto;
-  }
-
-  .ai-transition-reveal__media {
-    clip-path: circle(80vmax at 50% 50%);
-  }
-}

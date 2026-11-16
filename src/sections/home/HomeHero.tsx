@@ -1,34 +1,37 @@
-import { useId } from "react";
-import { Link } from "react-router-dom";
-import "./home-hero.css";
+import { useId } from 'react'
+import { HeroTablet } from './HeroTablet'
+import { SharedHeroBackground } from './SharedHeroBackground'
+import './home-hero.css'
+
+const words = ['DESIGN', 'EXPERIENCE', 'PUBLISHING']
+const highlights = ['EXPERIENCE', 'PUBLISHING', 'PUBLISHING']
 
 export function HomeHero() {
-  const titleId = useId();
+  const titleId = useId()
 
   return (
     <section className="home-hero" aria-labelledby={titleId}>
-      <div className="page-container">
-        <div className="content-container home-hero__inner">
-          <p className="home-hero__service-name">Dirve Into Verified Experiences.</p>
-          <h1 id={titleId} className="home-hero__title">
-            <span className="home-hero__title-mask">
-              <span className="home-hero__title-line">
-                디자인부터 퍼블리싱까지,
-                <br />
-                처음 시작하는 사람들을 위한
-                <br />소셜 웹 가이드
-              </span>
-            </span>
-          </h1>
-          <p className="home-hero__description">
-            UI/UX 레퍼런스, AI 도구, 디자인 리소스와 웹 라이브러리를 한곳에서
-            탐색해보세요.
-          </p>
-          <Link className="home-hero__cta" to="/reference">
-            Learn more
-          </Link>
+      <div className="home-hero__stage">
+        <SharedHeroBackground />
+        <div className="home-hero__marquee" aria-hidden="true">
+          <div className="home-hero__marquee-reveal">
+            <div className="home-hero__marquee-track">
+              {[0, 1].map((copy) => (
+                <div className="home-hero__marquee-cycle" key={copy}>
+                  {highlights.map((highlight, index) => (
+                    <div className="home-hero__marquee-phrase" key={index}>
+                      {words.map((word) => (
+                        <span key={word} data-selection={word === highlight ? word : undefined}>{word}</span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+        <HeroTablet titleId={titleId} />
       </div>
     </section>
-  );
+  )
 }
